@@ -30,7 +30,7 @@ vector<int> goodmuons_idx(rvec_i g){
   return out; 
 }
 
-void ana_lq(){
+void flav_ana_lq(){
 
   //ROOT::RDataFrame df("Events", "/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano14Dec2018-v1/10000/BCC1B466-EF27-9D40-A0B7-9FE64F456E13.root");
   //ROOT::RDataFrame df("Events", "signal_nano.root");
@@ -40,38 +40,8 @@ void ana_lq(){
   
 
   ROOT::RDataFrame df("Events", "/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2016_nano.root");
-  // ROOT::RDataFrame df("Events", "/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2017_nano.root");
+  //ROOT::RDataFrame df("Events", "/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2017_nano.root");
   //ROOT::RDataFrame df("Events", "/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root");
-
-
-/*
-
-  // working points of each years -> Doesn't work :(
-int year = 2016;
-//int year = 2017;
-//int year = 2018;
-
-double CvsB_l; double CvsB_m; double CvsB_t; 
-double CvsL_l; double CvsL_m; double CvsL_t;
-double DeepB_l; double DeepB_m; double DeepB_t;
-
-if (year == 2016){
-  CvsB_l = 0.19; CvsB_m = 0.14; CvsB_t = 0.05;
-  CvsL_l = 0.05; CvsL_m = 0.155; CvsL_t = 0.59;
-  DeepB_l = 0.2217; DeepB_m = 0.6321; DeepB_t = 0.8953;
-}else if (year == 2017){
-  CvsB_l = 0.33; CvsB_m = 0.28; CvsB_t = 0.1; 
-  CvsL_l = 0.05; CvsL_m = 0.15; CvsL_t = 0.8;
-  DeepB_l = 0.1522; DeepB_m = 0.4941; DeepB_t = 0.8001; 
-}else if (year == 2018){
-  CvsB_l = 0.35; CvsB_m = 0.29; CvsB_t = 0.1;
-  CvsL_l = 0.04; CvsL_m = 0.137; CvsL_t = 0.66;
-  DeepB_l = 0.1241; DeepB_m = 0.4184; DeepB_t = 0.7527;
-}
-std::cout << CvsB_l << std::endl;
-
-*/
-
 
   //good muon selection
   auto df_S1_muon = df.Filter("nMuon >= 1", "Events with one lepton")
@@ -80,91 +50,90 @@ std::cout << CvsB_l << std::endl;
   auto df_S1_goodmuon = df_S1_muon.Filter("Sum( goodmuons ) >=1 ","Events with at least a goood muon")
                                   .Define("goodmuons_idx",goodmuons_idx,{"goodmuons"});
   auto df_S1_goodtau = df_S1_goodmuon.Filter("Sum( goodtaus ) >=1 ","Events with at least a goood tau")
-                                     .Define("CvsB","Jet_btagDeepC/(Jet_btagDeepC+Jet_btagDeepB)")
-				     .Define("Jet_btagDeepLF","1-(Jet_btagDeepC+Jet_btagDeepB)")
-				     .Define("CvsL","Jet_btagDeepC/(Jet_btagDeepC+Jet_btagDeepLF)"); /*
-                                     .Define("goodcjets_l","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > CvsB_l && CvsL > CvsL_l ") 
-				     .Define("goodcjets_m","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > CvsB_m && CvsL > CvsL_m") 
-				     .Define("goodcjets_t","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > CvsB_t && CvsL > CvsL_t") 
-                                     .Define("goodbjets_l","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepB > DeepB_l")
-                                     .Define("goodbjets_m","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepB > DeepB_m") 
-                                     .Define("goodbjets_t","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepB > DeepB_t"); 
-											*/
+                                     .Define("CvsB","Jet_btagDeepFlavC/(Jet_btagDeepFlavC+Jet_btagDeepFlavB)")
+				     .Define("Jet_btagDeepFlavLF","1-(Jet_btagDeepFlavC+Jet_btagDeepFlavB)")
+                                     .Define("CvsL","Jet_btagDeepFlavC/(Jet_btagDeepFlavC+Jet_btagDeepFlavLF)")
+                                     .Define("goodcjets_l","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > 0.4 && CvsL > 0.03") //(0.4,0.03)/same
+				     .Define("goodcjets_m","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > 0.29 && CvsL > 0.085") //(0.29,0.085)
+				     .Define("goodcjets_t","Jet_pt > 20 && abs(Jet_eta) < 2.4 && CvsB > 0.05 && CvsL > 0.48 ") //(0.05,0.48)
+                                     .Define("goodbjets_l","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepFlavB > 0.0614") //0.0614/0.0521/0.0494
+                                     .Define("goodbjets_m","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepFlavB > 0.3093") //0.3093/0.3033//0.2770
+                                     .Define("goodbjets_t","Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_btagDeepFlavB > 0.7221"); //0.7221/0.7489//0.7264
   auto df_S1_hadronFlav_b = df_S1_goodtau.Define("b_hadron", "Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_hadronFlavour == 5")
-				         .Filter("Sum(b_hadron)>=1","Jets with at least one b ghost hadron");
+                                         .Filter("Sum(b_hadron)>=1","Jets with at least one b ghost hadron");
   auto df_S1_hadronFlav_c = df_S1_goodtau.Define("c_hadron", "Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_hadronFlavour == 4")
                                          .Filter("Sum(c_hadron)>=1","Jets with at least one c and no b ghost hadrons");
   auto df_S1_hadronFlav_lf = df_S1_goodtau.Define("lf_hadron", "Jet_pt > 20 && abs(Jet_eta) < 2.4 && Jet_hadronFlavour == 0")
-                                          .Filter("Sum(lf_hadron)>=1","Jets with no b or c hadrons");
-
-/*  auto df_S1_bjets = df_S1_goodtau.Filter("Sum( goodbjets_m ) >=1","Events with at least a b jet");
+                                         .Filter("Sum(lf_hadron)>=1","Jets with no b or c hadrons");
+  auto df_S1_bjets = df_S1_goodtau.Filter("Sum( goodbjets_m ) >=1","Events with at least a b jet");
   auto df_S1_ttb = df_S1_bjets.Filter("(genTtbarId/10)%10 == 5","ttb+bb event");
-*/
+
   //histograms 
   auto h_muon_pt = df_S1_goodmuon.Define("muon_pt","Muon_pt[goodmuons][0]").Histo1D({"h_muon_pt", "h_muon_pt", 100, 0, 100}, "muon_pt");
-  auto h_n_selmuon = df_S1_goodmuon.Define("n_selmuon","Sum(goodmuons)").Histo1D({"h_n_selmuon", "h_n_selmuon", 5, 0, 5}, "n_selmuon"); 
+  auto h_n_selmuon = df_S1_goodmuon.Define("n_selmuon","Sum(goodmuons)").Histo1D({"h_n_selmuon", "h_n_selmuon", 5, 0, 5}, "n_selmuon");
   auto h_n_tau = df_S1_goodmuon.Histo1D({"h_n_tau", "h_n_tau", 5, 0, 5}, "nTau");
   auto h_n_seltau = df_S1_goodmuon.Define("ntaujets", "Sum(goodtaus)").Histo1D({"h_n_seltau", "h_n_seltau", 5, 0, 5}, "ntaujets");
 
   auto h_hadronFlav = df_S1_goodtau.Histo1D({"h_hadronFlav", "h_hadronFlav",10, 0,10}, "Jet_hadronFlavour");
-  auto h_Jet_btagDeepB_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepB_b", "h_Jet_btagDeepB_b", 100, 0, 1}, "Jet_btagDeepB");
-  auto h_Jet_btagDeepB_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepB_c", "h_Jet_btagDeepB_c", 100, 0, 1}, "Jet_btagDeepB");
-  auto h_Jet_btagDeepB_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepB_lf", "h_Jet_btagDeepB_lf", 100, 0, 1}, "Jet_btagDeepB");
-  auto h_Jet_btagDeepC_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepC_b", "h_Jet_btagDeepC_b", 100, 0,1}, "Jet_btagDeepC");
-  auto h_Jet_btagDeepC_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepC_c", "h_Jet_btagDeepC_c", 100, 0,1}, "Jet_btagDeepC");
-  auto h_Jet_btagDeepC_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepC_lf", "h_Jet_btagDeepC_lf", 100, 0,1}, "Jet_btagDeepC");
-  auto h_Jet_btagDeepLF_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepLF_b", "h_Jet_btagDeepLF_b", 100, 0,1}, "Jet_btagDeepLF");
-  auto h_Jet_btagDeepLF_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepLF_c", "h_Jet_btagDeepLF_c", 100, 0,1}, "Jet_btagDeepLF");
-  auto h_Jet_btagDeepLF_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepLF_lf", "h_Jet_btagDeepLF_lf", 100, 0,1}, "Jet_btagDeepLF");
+  auto h_Jet_btagDeepFlavB_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepFlavB_b", "h_Jet_btagDeepFLavB_b", 100, 0, 1}, "Jet_btagDeepFlavB");
+  auto h_Jet_btagDeepFlavB_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepFlavB_c", "h_Jet_btagDeepFlavB_c", 100, 0, 1}, "Jet_btagDeepFlavB");
+  auto h_Jet_btagDeepFlavB_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepFlavB_lf", "h_Jet_btagDeepFlavB_lf", 100, 0, 1}, "Jet_btagDeepFlavB");
+  auto h_Jet_btagDeepFlavC_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepFlavC_b", "h_Jet_btagDeepFlavC_b", 100, 0,1}, "Jet_btagDeepFlavC");
+  auto h_Jet_btagDeepFlavC_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepFlavC_c", "h_Jet_btagDeepFLavC_c", 100, 0,1}, "Jet_btagDeepFlavC");
+  auto h_Jet_btagDeepFlavC_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepFlavC_lf", "h_Jet_btagDeepFlavC_lf", 100, 0,1}, "Jet_btagDeepFlavC");
+  auto h_Jet_btagDeepFlavLF_b = df_S1_hadronFlav_b.Histo1D({"h_Jet_btagDeepFlavLF_b", "h_Jet_btagDeepFlavLF_b", 100, 0,1}, "Jet_btagDeepFlavLF");
+  auto h_Jet_btagDeepFlavLF_c = df_S1_hadronFlav_c.Histo1D({"h_Jet_btagDeepFlavLF_c", "h_Jet_btagDeepFlavLF_c", 100, 0,1}, "Jet_btagDeepFlavLF");
+  auto h_Jet_btagDeepFlavLF_lf = df_S1_hadronFlav_lf.Histo1D({"h_Jet_btagDeepFlavLF_lf", "h_Jet_btagDeepFlavLF_lf", 100, 0,1}, "Jet_btagDeepFlavLF");
   auto h_CvsB_b = df_S1_hadronFlav_b.Histo1D({"h_CvsB_b", "h_CvsB_b", 100, 0,1}, "CvsB");
   auto h_CvsB_c = df_S1_hadronFlav_c.Histo1D({"h_CvsB_c", "h_CvsB_c", 100, 0,1}, "CvsB");
   auto h_CvsB_lf = df_S1_hadronFlav_lf.Histo1D({"h_CvsB_lf", "h_CvsB_lf", 100, 0,1}, "CvsB");
   auto h_CvsL_b = df_S1_hadronFlav_b.Histo1D({"h_CvsL_b", "h_CvsL_b", 100, 0,1}, "CvsL");
   auto h_CvsL_c = df_S1_hadronFlav_c.Histo1D({"h_CvsL_c", "h_CvsL_c", 100, 0,1}, "CvsL");
   auto h_CvsL_lf = df_S1_hadronFlav_lf.Histo1D({"h_CvsL_lf", "h_CvsL_lf", 100, 0,1}, "CvsL");
-/*
+
   auto h_n_cjets_l = df_S1_goodtau.Define("ncjets_l","Sum( goodcjets_l )").Histo1D({"h_n_cjets_l", "h_n_cjets_l", 10, 0, 10}, "ncjets_l");
   auto h_n_cjets_m = df_S1_goodtau.Define("ncjets_m","Sum( goodcjets_m )").Histo1D({"h_n_cjets_m", "h_n_cjets_m", 10, 0, 10}, "ncjets_m");
   auto h_n_cjets_t = df_S1_goodtau.Define("ncjets_t","Sum( goodcjets_t )").Histo1D({"h_n_cjets_t", "h_n_cjets_t", 10, 0, 10}, "ncjets_t");
   auto h_n_bjets_l = df_S1_goodtau.Define("nbjets_l","Sum( goodbjets_l )").Histo1D({"h_n_bjets_l", "h_n_bjets_l", 10, 0, 10}, "nbjets_l");
   auto h_n_bjets_m = df_S1_goodtau.Define("nbjets_m","Sum( goodbjets_m )").Histo1D({"h_n_bjets_m", "h_n_bjets_m", 10, 0, 10}, "nbjets_m");
   auto h_n_bjets_t = df_S1_goodtau.Define("nbjets_t","Sum( goodbjets_t )").Histo1D({"h_n_bjets_t", "h_n_bjets_t", 10, 0, 10}, "nbjets_t");
-  */                            
+                              
   //df_S1_goodmuon.Snapshot("tree", "f.root");
-  TFile f("f.root", "recreate");
+  TFile f("f_flav.root", "recreate");
 
   plot( h_muon_pt, "h_muon_pt");
   plot( h_n_selmuon, "h_n_selmuon");
   plot( h_n_tau, "h_n_tau");
   plot( h_n_seltau, "h_n_seltau");
-  
+
   plot( h_hadronFlav, "h_hadronFlav");
-  plot( h_Jet_btagDeepB_b, "h_Jet_btagDeepB_b");
-  plot( h_Jet_btagDeepB_c, "h_Jet_btagDeepB_c");
-  plot( h_Jet_btagDeepB_lf, "h_Jet_btagDeepB_lf"); 
-  plot( h_Jet_btagDeepC_b, "h_Jet_btagDeepC_b");
-  plot( h_Jet_btagDeepC_c, "h_Jet_btagDeepC_c");
-  plot( h_Jet_btagDeepC_lf, "h_Jet_btagDeepC_lf");
-  plot( h_Jet_btagDeepLF_b, "h_Jet_btagDeepLF_b");
-  plot( h_Jet_btagDeepLF_c, "h_Jet_btagDeepLF_c");
-  plot( h_Jet_btagDeepLF_lf, "h_Jet_btagDeepLF_lf");
+  plot( h_Jet_btagDeepFlavB_b, "h_Jet_btagDeepFlavB_b");
+  plot( h_Jet_btagDeepFlavB_c, "h_Jet_btagDeepFlavB_c");
+  plot( h_Jet_btagDeepFlavB_lf, "h_Jet_btagDeepFlavB_lf");
+  plot( h_Jet_btagDeepFlavC_b, "h_Jet_btagDeepFlavC_b");
+  plot( h_Jet_btagDeepFlavC_c, "h_Jet_btagDeepFlavC_c");
+  plot( h_Jet_btagDeepFlavC_lf, "h_Jet_btagDeepFlavC_lf");
+  plot( h_Jet_btagDeepFlavLF_b, "h_Jet_btagDeepFlavLF_b");
+  plot( h_Jet_btagDeepFlavLF_c, "h_Jet_btagDeepFlavLF_c");
+  plot( h_Jet_btagDeepFlavLF_lf, "h_Jet_btagDeepFlavLF_lf");
   plot( h_CvsB_b, "h_CvsB_b");
   plot( h_CvsB_c, "h_CvsB_c");
   plot( h_CvsB_lf, "h_CvsB_lf");
   plot( h_CvsL_b, "h_CvsL_b");
   plot( h_CvsL_c, "h_CvsL_c");
   plot( h_CvsL_lf, "h_CvsL_lf");
-/*
+
+
   plot( h_n_cjets_l, "h_n_cjets_l");
   plot( h_n_cjets_m, "h_n_cjets_m");
   plot( h_n_cjets_t, "h_n_cjets_t");
   plot( h_n_bjets_l, "h_n_bjets_l");
   plot( h_n_bjets_m, "h_n_bjets_m");
   plot( h_n_bjets_t, "h_n_bjets_t");
-*/
+
   f.Close();
 
-//  auto report = df_S1_bjets.Report();
-//  report->Print();
+  auto report = df_S1_bjets.Report();
+  report->Print();
 
 }
