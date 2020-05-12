@@ -10,7 +10,7 @@ b = a.replace(".root","")
 #f = TFile('output.root','READ')
 f = TFile(importfile,'READ')
 t = f.Get('tree')
-t.SetLineWidth(2)
+#t.SetLineWidth(2)
 
 names = [x.GetName() for x in t.GetListOfLeaves()]
 

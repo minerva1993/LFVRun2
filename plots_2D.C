@@ -10,9 +10,9 @@ void makePlot_2D(TFile * f, TString b, TString c, TString lf){
   h_b->SetMarkerColor(2);
   h_c->SetMarkerColor(8);
   h_lf->SetMarkerColor(4);
-  h_b->SetMarkerStyle(kFullDotSmall);
-  h_c->SetMarkerStyle(kFullDotSmall);
-  h_lf->SetMarkerStyle(kFullDotSmall); 
+  h_b->SetMarkerStyle(kDot);//kFullDotSmall
+  h_c->SetMarkerStyle(kDot);
+  h_lf->SetMarkerStyle(kDot); 
   h_b->SetAxisRange(0., 1.5,"Y");
   h_c->SetAxisRange(0., 1.5,"Y");
   h_lf->SetAxisRange(0., 1.5,"Y");
@@ -46,7 +46,7 @@ void plots_2D(){
 
   setTDRStyle();
 
-  TFile * file = new TFile("f_DeepFlav_2018.root" );
+  TFile * file = new TFile("tt_f_DeepFlav_2018.root" );
 
   makePlot_2D(file,"h_ctag_2D_b","h_ctag_2D_c","h_ctag_2D_lf");
 }

@@ -23,8 +23,8 @@ void makePlot(TFile * f_s, TFile *f_b, TString name, TString ytitle, TString xti
   h_s->Draw("SameHIST");
 
   TLegend * l = new TLegend(x1,y1,x2,y2);
-  l->AddEntry(h_s,"new signal","L");
-  l->AddEntry(h_b,"old signal","L");
+  l->AddEntry(h_s,"LQ signal","L");
+  l->AddEntry(h_b,"ttbar BG","L");
   l->SetTextSize(0.04);
   l->SetFillColor(0);
   l->SetLineColor(0);
@@ -39,14 +39,26 @@ void plots(){
 
   setTDRStyle();
 
-  TFile * f_signal = new TFile("signal.root");
-  TFile * f_ttbar = new TFile("ttbar.root");
+  TFile * f_signal = new TFile("f_DeepFlav_2018.root");
+  TFile * f_ttbar = new TFile("tt_f_DeepFlav_2018.root");
 
-  makePlot(f_signal, f_ttbar, "h_n_selmuon", "Normalized Entries","Muon Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);
+/*  makePlot(f_signal, f_ttbar, "h_n_selmuon", "Normalized Entries","Muon Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_seltau", "Normalized Entries","Tau Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);
-  makePlot(f_signal, f_ttbar, "h_n_bjets_l", "Normalized Entries","b Jet Multiplicity (L)", 0.3, 0.75, 0.45, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_bjets_l", "Normalized Entries","b Jet Multiplicity (L)", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_bjets_m", "Normalized Entries","b Jet Multiplicity (M)", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_bjets_t", "Normalized Entries","b Jet Multiplicity (T)", 0.7, 0.75, 0.85, 0.9);
-  makePlot(f_signal, f_ttbar, "h_n_cjets", "Normalized Entries","c Jet Multiplicity", 0.3, 0.75, 0.45, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_cjets_l", "Normalized Entries","c Jet Multiplicity (L)", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_cjets_m", "Normalized Entries","c Jet Multiplicity (M)", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_cjets_t", "Normalized Entries","c Jet Multiplicity (T)", 0.7, 0.75, 0.85, 0.9); 
  
+  makePlot(f_signal, f_ttbar, "h_hadronFlav", "Normalized Entries", "Jet Flavour (lf,c,b:0,4,5)", 0.7, 0.75, 0.85, 0.9); 
+  makePlot(f_signal, f_ttbar, "h_n_good_b_hadron", "Normalized Entries", "Number of b jets", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_good_c_hadron", "Normalized Entries", "Number of c jets", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_good_lf_hadron", "Normalized Entries", "Number of lf jets", 0.7, 0.75, 0.85, 0.9);*/
+  makePlot(f_signal, f_ttbar, "h_n_goodjets", "Normalized Entries", "Number of good jets", 0.7, 0.75, 0.85, 0.9);
+/*  makePlot(f_signal, f_ttbar, "h_leading_good_b_hadron_pt", "Normalized Entries","pT of leading b jet", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_leading_good_c_hadron_pt", "Normalized Entries","pT of leading c jet", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_leading_good_lf_hadron_pt", "Normalized Entries","pT of leading lf jet", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_leading_goodjet_pt", "Normalized Entries","pT of leading jet", 0.7, 0.75, 0.85, 0.9);*/
+  
 }
