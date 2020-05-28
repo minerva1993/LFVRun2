@@ -6,8 +6,8 @@ void makePlot(TFile * f_s, TFile *f_b, TString name, TString ytitle, TString xti
   TH1F * h_b = (TH1F*) f_b->Get(Form("%s", name.Data()));
 
   TCanvas * c = new TCanvas(Form("c_%s",name.Data()),"c",1);
-  h_b->Sumw2();
-  h_s->Sumw2();
+//  h_b->Sumw2();
+//  h_s->Sumw2();
   h_s->Scale(1.0/h_s->Integral());
   h_b->Scale(1.0/h_b->Integral());
   h_s->SetLineColor(4);
@@ -21,12 +21,12 @@ void makePlot(TFile * f_s, TFile *f_b, TString name, TString ytitle, TString xti
   double max = max_h_b;
   if( max_h_s > max_h_b) max = max_h_s; 
   h_s->SetMaximum(max+0.04);
-  h_s->Draw("E1");
-  h_s->Draw("SameHist"); 
-//  h_s->Draw("Hist");
-  h_s->GetXaxis()->SetTitle(Form("%s",xtitle.Data()));
-  h_s->GetYaxis()->SetTitle(Form("%s",ytitle.Data()));
- h_b->Draw("SameE1");
+	h_s->GetXaxis()->SetTitle(Form("%s",xtitle.Data()));
+	h_s->GetYaxis()->SetTitle(Form("%s",ytitle.Data()));
+//  h_s->Draw("E1");
+//  h_s->Draw("SameHist"); 
+  h_s->Draw("Hist");
+// h_b->Draw("SameE1");
   h_b->Draw("SameHist");
 
   TLegend * l = new TLegend(x1,y1,x2,y2);
@@ -53,7 +53,7 @@ void plots(){
 //  TFile * f_ttbar = new TFile("tt_f_DeepFlav_2018.root");
 /*
   makePlot(f_signal, f_ttbar, "h_n_selmuon", "Normalized Entries","Muon Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);
-  makePlot(f_signal, f_ttbar, "h_n_seltau", "Normalized Entries","Tau Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_seltau", "Normalized Entries","Tau Jet Multiplicity", 0.7, 0.75, 0.85, 0.9);*/
   makePlot(f_signal, f_ttbar, "h_n_bjet_l", "Normalized Entries","b Jet Multiplicity (L)", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_bjet_m", "Normalized Entries","b Jet Multiplicity (M)", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_bjet_t", "Normalized Entries","b Jet Multiplicity (T)", 0.7, 0.75, 0.85, 0.9);
@@ -63,13 +63,13 @@ void plots(){
  
 //  makePlot(f_signal, f_ttbar, "h_goodhadron_Flav", "Normalized Entries", "Jet Flavour (lf,c,b:0,4,5)", 0.7, 0.75, 0.85, 0.9); 
   makePlot(f_signal, f_ttbar, "h_n_good_b_hadron", "Normalized Entries", "Number of b jets", 0.7, 0.75, 0.85, 0.9);
-  makePlot(f_signal, f_ttbar, "h_n_good_c_hadron", "Normalized Entries", "Number of c jets", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_n_good_c_hadron", "Normalized Entries", "Number of c jets", 0.7, 0.75, 0.85, 0.9);/*
   makePlot(f_signal, f_ttbar, "h_n_good_lf_hadron", "Normalized Entries", "Number of lf jets", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_n_goodjets", "Normalized Entries", "Number of good jets", 0.7, 0.75, 0.85, 0.9);
-*/  makePlot(f_signal, f_ttbar, "h_leading_good_b_hadron_pt", "Normalized Entries","pT of leading b jet", 0.7, 0.75, 0.85, 0.9);
+  makePlot(f_signal, f_ttbar, "h_leading_good_b_hadron_pt", "Normalized Entries","pT of leading b jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_good_c_hadron_pt", "Normalized Entries","pT of leading c jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_good_lf_hadron_pt", "Normalized Entries","pT of leading lf jet", 0.7, 0.75, 0.85, 0.9);
-  makePlot(f_signal, f_ttbar, "h_leading_goodjet_pt", "Normalized Entries","pT of leading jet", 0.7, 0.75, 0.85, 0.9);/*
+  makePlot(f_signal, f_ttbar, "h_leading_goodjet_pt", "Normalized Entries","pT of leading jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_btagged_jet_l_pt", "Normalized Entries","pT of leading loose b-tagged jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_btagged_jet_m_pt", "Normalized Entries","pT of leading medium b-tagged jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_btagged_jet_t_pt", "Normalized Entries","pT of leading tight b-tagged jet", 0.7, 0.75, 0.85, 0.9);
@@ -77,9 +77,9 @@ void plots(){
   makePlot(f_signal, f_ttbar, "h_leading_ctagged_jet_m_pt", "Normalized Entries","pT of leading medium c-tagged jet", 0.7, 0.75, 0.85, 0.9);
   makePlot(f_signal, f_ttbar, "h_leading_ctagged_jet_t_pt", "Normalized Entries","pT of leading tight c-tagged jet", 0.7, 0.75, 0.85, 0.9);
 	makePlot(f_signal, f_ttbar, "h_leading_good_b_cfW_ptsum", "Normalized Entries","pT Sum of leading b jet and leading c jet from W", 0.7, 0.75, 0.85, 0.9);
-*/	
+	
 	makePlot(f_signal, f_ttbar, "h_leading_good_b_hadron_eta", "Normalized Entries", "eta of leading b jet",  0.7, 0.75, 0.85, 0.9);
 	makePlot(f_signal, f_ttbar, "h_leading_good_c_hadron_eta", "Normalized Entries", "eta of leading c jet",  0.7, 0.75, 0.85, 0.9);
 	makePlot(f_signal, f_ttbar, "h_leading_good_lf_hadron_eta", "Normalized Entries", "eta of leading lf jet",  0.7, 0.75, 0.85, 0.9);
-	makePlot(f_signal, f_ttbar, "h_leading_goodjet_eta", "Normalized Entries", "eta of leading jet",  0.7, 0.75, 0.85, 0.9);
+	makePlot(f_signal, f_ttbar, "h_leading_goodjet_eta", "Normalized Entries", "eta of leading jet",  0.7, 0.75, 0.85, 0.9);*/
 }

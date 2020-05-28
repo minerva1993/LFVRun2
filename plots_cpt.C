@@ -49,6 +49,5 @@ void plots_cpt(){
     TFile * BG = new TFile("tt_f_DeepFlav_2018.root");
 
 //    makePlot_cpt(S,"h_leading_good_cjet_W_S","h_leading_good_c_hadron_nfW_pt","h_leading_good_c_hadron_ifW_pt",0.35,0.75,0.65,0.9 );	
-
 		makePlot_cpt(BG,"h_leading_good_cjet_W_BG","h_leading_good_c_hadron_nfW_pt","h_leading_good_c_hadron_ifW_pt",0.35,0.75,0.65,0.9 );
 }
