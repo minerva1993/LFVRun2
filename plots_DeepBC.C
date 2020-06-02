@@ -22,7 +22,8 @@ void makePlot_DeepB(TFile * f, TString name, TString b, TString c, TString lf){
   h_b->SetAxisRange(0.00001,10,"Y");
   h_c->SetAxisRange(0.00001,10,"Y");
   h_lf->SetAxisRange(0.00001,10,"Y");
-  h_b->GetXaxis()->SetTitle("Jet_btagDeepFlavB");
+//  h_b->GetXaxis()->SetTitle("Jet_btagDeepFlavB");
+  h_b->GetXaxis()->SetTitle("Jet_btagDeepFlavC");
   h_b->GetYaxis()->SetTitle("Number of Jets");
   h_b->Draw("HIST");
   h_c->Draw("SameHIST");
@@ -57,5 +58,6 @@ void plots_DeepB(){
 //    TFile * file = new TFile("f_DeepFlav_2018.root");
     TFile * file = new TFile("tt_f_DeepFlav_2018.root");
 
-  makePlot_DeepB(file,"h_DeepB_bclf","h_DeepB_b","h_DeepB_c","h_DeepB_lf");
+//		makePlot_DeepB(file,"h_DeepB_bclf","h_DeepB_b","h_DeepB_c","h_DeepB_lf");
+		makePlot_DeepB(file,"h_DeepC_bclf","h_DeepC_b","h_DeepC_c","h_DeepC_lf");
 }
