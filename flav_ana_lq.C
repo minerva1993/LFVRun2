@@ -153,7 +153,7 @@ void flav_ana_lq(TString input = "LQ"){
 	auto df_S2_goodtau2 = df_S2_goodtau.Filter("n_goodtau >=2","Two tau jets")
 																		 .Define("goodtau2_idx",second_idx,{"goodtau_idx"});
 	auto df_S2_goodtau1_mother = df_S2_goodtau.Define("goodtau1_genidx","Tau_genPartIdx[goodtau1_idx]")
-																						.Filter("goodtau1_genidx > -1","traced tau")
+																						.Filter("goodtau1_genidx > -1","gen traced tau")
 																						.Define("goodtau1_motheridx","GenPart_genPartIdxMother[goodtau1_genidx]")
 																						.Filter("goodtau1_motheridx > -1", "mother traced tau")
 																						.Define("goodtau1_mother","abs(GenPart_pdgId[goodtau1_motheridx])");
@@ -161,7 +161,7 @@ void flav_ana_lq(TString input = "LQ"){
 																								.Define("muon_mother_idx","abs(GenPart_genPartIdxMother[goodtau1_motheridx])")
 																								.Define("muon_mother","abs(GenPart_pdgId[muon_mother_idx])");
 	auto df_S2_goodtau2_mother = df_S2_goodtau2.Define("goodtau2_genidx","Tau_genPartIdx[goodtau2_idx]")
-																						 .Filter("goodtau2_genidx > -1","traced tau2")
+																						 .Filter("goodtau2_genidx > -1","gen traced tau2")
 																						 .Define("goodtau2_motheridx","GenPart_genPartIdxMother[goodtau2_genidx]")
 																						 .Filter("goodtau2_motheridx > -1", "mother traced tau")
 																						 .Define("goodtau2_mother","abs(GenPart_pdgId[goodtau2_motheridx])");
@@ -173,7 +173,7 @@ void flav_ana_lq(TString input = "LQ"){
 													.Define("good_b_hadron","goodjet && Jet_hadronFlavour == 5")
 													.Define("good_c_hadron","goodjet  && Jet_hadronFlavour == 4")
 													.Define("good_lf_hadron","goodjet && Jet_hadronFlavour == 0");
-
+	//**** GenTtbarId ****//
 	auto df_S4_TtbarId = df_S3_goodhadron.Define("n_cjet_fromW","genTtbarId/10000")
 																			 .Define("n_bjet_fromW","(genTtbarId%10000)/1000")
 																			 .Define("n_bjet_fromt","(genTtbarId%1000)/100");
@@ -230,7 +230,8 @@ void flav_ana_lq(TString input = "LQ"){
 			 "good_c_hadron2_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
 			 "goodtau1_idx","Tau_pt","Tau_eta","Tau_phi","Tau_mass"});
 
-	auto df_S7_reco_W_tocs_ifW = df_S6_good_c_hadron_ifW.Define("tau_traced_jet","Tau_jetIdx>0")
+	auto df_S7_reco_W_tocs_ifW = df_S6_good_c_hadron_ifW
+		.Define("tau_traced_jet","Tau_jetIdx>0")
 		.Define("n_tau_traced_jet","Sum(tau_traced_jet)")
 		.Filter("n_tau_traced_jet >= 1", "At least one tau jet(traced)")
 		.Define("Tau_traced_jetIdx","Tau_jetIdx[tau_traced_jet]")
@@ -243,7 +244,8 @@ void flav_ana_lq(TString input = "LQ"){
 		.Define("inv_mass_W_tocs_ifW",mass_reconst2,
 			{"leading_good_lf_ex_tau1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
 			 "good_c_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass"});
-	auto df_S7_reco_top_toWb_ifW = df_S7_reco_W_tocs_ifW.Filter("Sum(good_b_hadron)>=1","At least one godd b jet")
+	auto df_S7_reco_top_toWb_ifW = df_S7_reco_W_tocs_ifW
+		.Filter("Sum(good_b_hadron)>=1","At least one godd b jet")
 		.Define("good_b_hadron_idx",good_idx,{"good_b_hadron"})
 		.Define("good_b_hadron1_idx",leading_idx,{"good_b_hadron_idx"})
 		.Define("inv_mass_top_toWb_ifW",mass_reconst3,
@@ -268,6 +270,7 @@ void flav_ana_lq(TString input = "LQ"){
 		.Define("CvsB_lf", "CvsB[good_lf_hadron]") .Define("CvsL_b", "CvsL[good_b_hadron]")
 		.Define("CvsL_c", "CvsL[good_c_hadron]")   .Define("CvsL_lf", "CvsL[good_lf_hadron]");
 
+	//**** Not in use currently ****//
 	auto df_S_bjet = df_S5_Deep_hadron.Filter("Sum( goodbjet_m ) >=1","Events with at least one b jet");
 	auto df_S_ttb = df_S5_Deep_hadron.Filter("(genTtbarId/10)%10 == 5","ttb+bb event");
 
@@ -304,7 +307,6 @@ void flav_ana_lq(TString input = "LQ"){
 	auto h_tau_eta = df_S2_goodtau.Define("goodtau1_eta","Tau_eta[goodtau1_idx]").Histo1D({"h_tau_eta", "h_tau_eta", 50, -5, 5}, "goodtau1_eta");
 	auto h_n_tau = df_S1_goodmuon.Histo1D({"h_n_tau", "h_n_tau", 5, 0, 5}, "nTau");
 	auto h_n_seltau = df_S2_goodtau.Histo1D({"h_n_seltau", "h_n_seltau", 5, 0, 5}, "n_goodtau");
-//	auto h_Tau_traced_jet1Idx = df_S2_goodtau.Histo1D({"h_Tau_traced_jet1Idx", "h_Tau_traced_jet1Idx",15,-5,10},"Tau_traced_jet1Idx");
 	auto h_goodtau1_mother = df_S2_goodtau1_mother.Histo1D({"h_goodtau1_mother","h_goodtau1_mother",100,0,100},"goodtau1_mother");
 	auto h_muon_mother = df_S2_muon_mother.Histo1D({"h_muon_mother","h_muon_mother",100,0,100},"muon_mother");
 	auto h_goodtau2_mother = df_S2_goodtau2_mother.Histo1D({"h_goodtau2_mother","h_goodtau2_mother",100,0,100},"goodtau2_mother");
@@ -344,8 +346,6 @@ void flav_ana_lq(TString input = "LQ"){
 				.Histo1D({"h_leading_good_c_hadron_nfW_pt","h_leading_good_c_hadron_nfW_pt",20, 0, 200}, "leading_good_c_hadron_nfW_pt");
 	auto h_leading_good_c_hadron_ifW_pt = df_S6_good_c_hadron_ifW.Define("leading_good_c_hadron_ifW_pt", "Jet_pt[good_c_hadron1_idx]")
 				.Histo1D({"h_leading_good_c_hadron_ifW_pt","h_leading_good_c_hadron_ifW_pt",20, 0, 200}, "leading_good_c_hadron_ifW_pt");
-	auto h_leading_good_b_cfW_ptsum = df_S6_top_toWb_reco.Define("leading_good_b_cfW_ptsum", "Jet_pt[good_c_hadron1_idx]+Jet_pt[good_b_hadron1_idx]")
-				.Histo1D({"h_leading_good_b_cfW_ptsum", "h_leading_good_b_cfW_ptsum",40,0,400},"leading_good_b_cfW_ptsum");
 
 	auto h_n_good_c_hadron_ifW = df_S6_good_c_hadron_ifW.Define("n_good_c_hadron_ifW","Sum(good_c_hadron)")
 				.Histo1D({"h_n_good_c_hadron_ifW","h_n_good_c_hadron_ifW", 10, 0, 10}, "n_good_c_hadron_ifW");
@@ -354,6 +354,7 @@ void flav_ana_lq(TString input = "LQ"){
 	auto h_inv_mass_top_toLQ_ifW = df_S7_reco_top_toLQ_ifW.Histo1D({"h_inv_mass_top_toLQ_ifW","h_inv_mass_top_toLQ_ifW",50,0,500},"inv_mass_top_toLQ_ifW");
 	auto h_inv_mass_W_tocs_ifW = df_S7_reco_W_tocs_ifW.Histo1D({"h_inv_mass_W_tocs_ifW","h_inv_mass_W_tocs_ifW",50,0,500},"inv_mass_W_tocs_ifW");
 	auto h_inv_mass_top_toWb_ifW = df_S7_reco_top_toWb_ifW.Histo1D({"h_inv_mass_top_toWb_ifW","h_inv_mass_top_toWb_ifW",50,0,500},"inv_mass_top_toWb_ifW");
+	auto h_Tau_traced_jet1Idx = df_S7_reco_top_toWb_ifW.Histo1D({"h_Tau_traced_jet1Idx", "h_Tau_traced_jet1Idx",15,-5,10},"Tau_traced_jet1Idx");
 /*
 	auto h_leading_btagged_jet_l_pt = df_S1_btagged_jets_l.Define("leading_btagged_jet_l_pt","Jet_pt[goodbjet_l][0]")
 				.Histo1D({"h_leading_btagged_jet_l_pt","h_leading_btagged_jet_l_pt",20, 0, 200}, "leading_btagged_jet_l_pt");
@@ -506,7 +507,6 @@ void flav_ana_lq(TString input = "LQ"){
 	plot( h_tau_eta, "h_tau_eta");
 	plot( h_n_tau, "h_n_tau");
 	plot( h_n_seltau, "h_n_seltau");
-//	plot( h_Tau_traced_jet1Idx, "Tau_traced_jet1Idx");
 	plot( h_goodtau1_mother, "h_goodtau1_mother");
 	plot( h_goodtau2_mother, "h_goodtau2_mother");
 	plot( h_muon_mother, "h_muon_mother");
@@ -532,9 +532,7 @@ void flav_ana_lq(TString input = "LQ"){
 	plot( h_leading_good_c_hadron_nfW_pt, "h_leading_good_c_hadron_nfW_pt");
 	plot( h_leading_good_c_hadron_ifW_pt, "h_leading_good_c_hadron_ifW_pt");
 	plot( h_n_good_c_hadron_ifW, "h_n_good_c_hadron_ifW");
-	plot( h_leading_good_b_cfW_ptsum, "h_leading_good_b_cfW_ptsum");
-//	plot( h_leading_good_b_cfW_lf_ptsum, "h_leading_good_b_cfW_lf_ptsum");
-
+	plot( h_Tau_traced_jet1Idx, "Tau_traced_jet1Idx");
 	plot( h_inv_mass_top_toLQ_nfW, "h_inv_mass_top_toLQ_nfW");
 	plot( h_inv_mass_top_toLQ_ifW, "h_inv_mass_top_toLQ_ifW");
 	plot( h_inv_mass_W_tocs_ifW, "h_inv_mass_W_tocs_ifW");
