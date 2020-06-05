@@ -145,7 +145,7 @@ void flav_ana_lq(TString input = "LQ"){
 													.Define("goodmuon1_idx",leading_idx,{"goodmuon_idx"});
 
 	//**** Tau Selection ****//
-	auto df_S2_goodtau = df_S1_goodmuon.Define("goodtau","Tau_pt > 30 && abs(Tau_eta) < 2.3 &&  Tau_idMVAoldDM & 2")
+	auto df_S2_goodtau = df_S1_goodmuon.Define("goodtau","Tau_pt > 30 && abs(Tau_eta) < 2.3 &&  Tau_idMVAoldDM & 4")
 																		 .Define("n_goodtau","Sum(goodtau)")
 																		 .Filter("n_goodtau >= 1","Tau Selection")
 																		 .Define("goodtau_idx",good_idx,{"goodtau"})
@@ -157,14 +157,39 @@ void flav_ana_lq(TString input = "LQ"){
 																						.Define("goodtau1_motheridx","GenPart_genPartIdxMother[goodtau1_genidx]")
 																						.Filter("goodtau1_motheridx > -1", "mother traced tau")
 																						.Define("goodtau1_mother","abs(GenPart_pdgId[goodtau1_motheridx])");
-	auto df_S2_muon_mother = df_S2_goodtau1_mother.Filter("goodtau1_mother == 13","tau's mother muon")
-																								.Define("muon_mother_idx","abs(GenPart_genPartIdxMother[goodtau1_motheridx])")
-																								.Define("muon_mother","abs(GenPart_pdgId[muon_mother_idx])");
+	auto df_S2_goodtau1_gmother = df_S2_goodtau1_mother.Filter("goodtau1_mother != 6","exclude if tau's mother top") 
+																										 .Define("goodtau1_gmotheridx","GenPart_genPartIdxMother[goodtau1_motheridx]")
+																										 .Filter("goodtau1_gmotheridx > -1", "gmother traced")
+																										 .Define("goodtau1_gmother","abs(GenPart_pdgId[goodtau1_gmotheridx])");
+	auto df_S2_taumu_mother = df_S2_goodtau1_gmother.Filter("goodtau1_mother == 13","tau's mother muon")
+																										.Define("goodtau1_ggmotheridx","GenPart_genPartIdxMother[goodtau1_gmotheridx]")
+																										.Define("goodtau1_ggmother","abs(GenPart_pdgId[goodtau1_ggmotheridx])");
+	auto df_S2_taumuW_mother = df_S2_taumu_mother.Filter("goodtau1_gmother == 24","tau muon W mother");
+	auto df_S2_taumumu_mother = df_S2_taumu_mother.Filter("goodtau1_gmother == 13","tau muon muon gmother");
+		
+
 	auto df_S2_goodtau2_mother = df_S2_goodtau2.Define("goodtau2_genidx","Tau_genPartIdx[goodtau2_idx]")
-																						 .Filter("goodtau2_genidx > -1","gen traced tau2")
-																						 .Define("goodtau2_motheridx","GenPart_genPartIdxMother[goodtau2_genidx]")
-																						 .Filter("goodtau2_motheridx > -1", "mother traced tau")
-																						 .Define("goodtau2_mother","abs(GenPart_pdgId[goodtau2_motheridx])");
+																							.Filter("goodtau2_genidx > -1","gen traced tau2")
+																							.Define("goodtau2_motheridx","GenPart_genPartIdxMother[goodtau2_genidx]")
+																							.Filter("goodtau2_motheridx > -1", "mother traced tau")
+																							.Define("goodtau2_mother","abs(GenPart_pdgId[goodtau2_motheridx])");
+
+	auto df_S2_goodGentau = df_S1_goodmuon.Define("goodGentau","GenVisTau_pt > 30 && abs(GenVisTau_eta) < 2.3")
+																				.Define("n_goodGentau","Sum(goodGentau)")
+																				.Filter("n_goodGentau >= 1","GenTau Selection")
+																				.Define("goodGentau_idx",good_idx,{"goodGentau"})
+																				.Define("goodGentau1_idx",leading_idx,{"goodGentau_idx"});
+	auto df_S2_goodGentau2 = df_S2_goodGentau.Filter("n_goodGentau >=2","Two Gentau jets")
+																					 .Define("goodGentau2_idx",second_idx,{"goodGentau_idx"});
+	auto df_S2_goodGentau1_mother = df_S2_goodGentau.Define("goodGentau1_motheridx","GenVisTau_genPartIdxMother[goodGentau1_idx]")
+																									.Filter("goodGentau1_motheridx > -1", "mother traced Gentau")
+																									.Define("goodGentau1_mother","abs(GenPart_pdgId[goodGentau1_motheridx])");
+/*	auto df_S2_goodGentau1_gmother = df_S2_goodGentau1_mother.Define("goodGentau1_gmotheridx","GenPart_genPartIdxMother[goodGentau1_motheridx]")
+																													 .Filter("goodGentau1_gmotheridx > -1", "gmother traced")
+																													 .Define("goodGentau1_gmother","abs(GenPart_pdgId[goodGentau1_gmotheridx])");
+*/	auto df_S2_goodGentau2_mother = df_S2_goodGentau2.Define("goodGentau2_motheridx","GenVisTau_genPartIdxMother[goodGentau2_idx]")
+																									 .Filter("goodGentau2_motheridx > -1", "mother traced Gentau")
+																									 .Define("goodGentau2_mother","abs(GenPart_pdgId[goodGentau2_motheridx])");
 
 
 	//**** Gen Level Flavour ****//
@@ -253,6 +278,7 @@ void flav_ana_lq(TString input = "LQ"){
 			 "good_c_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
 			 "good_b_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass"});
 
+
 	//**** Results of tagging ****//
 	auto df_S5_btagged_jet_l = df_S5_good_btag.Filter("Sum(goodbjet_l)>=1", "Events with at least one loose b-tagged jet");
 	auto df_S5_btagged_jet_m = df_S5_good_btag.Filter("Sum(goodbjet_m)>=1", "Events with at least one medium b-tagged jet");
@@ -301,15 +327,22 @@ void flav_ana_lq(TString input = "LQ"){
 
 	auto h_muon_pt = df_S1_goodmuon.Define("goodmuon1_pt","Muon_pt[goodmuon1_idx]").Histo1D({"h_muon_pt", "h_muon_pt", 10, 0, 100}, "goodmuon1_pt");
 	auto h_muon_eta = df_S1_goodmuon.Define("goodmuon1_eta","Muon_eta[goodmuon1_idx]").Histo1D({"h_muon_eta", "h_muon_eta", 50, -5, 5}, "goodmuon1_eta");
-	auto h_n_selmuon = df_S1_goodmuon.Histo1D({"h_n_selmuon", "h_n_selmuon", 5, 0, 5}, "n_goodmuon"); 
+	auto h_n_goodmuon = df_S1_goodmuon.Histo1D({"h_n_goodmuon", "h_n_goodmuon", 5, 0, 5}, "n_goodmuon"); 
 
 	auto h_tau_pt = df_S2_goodtau.Define("goodtau1_pt","Tau_pt[goodtau1_idx]").Histo1D({"h_tau_pt", "h_tau_pt", 10, 0, 100}, "goodtau1_pt");
 	auto h_tau_eta = df_S2_goodtau.Define("goodtau1_eta","Tau_eta[goodtau1_idx]").Histo1D({"h_tau_eta", "h_tau_eta", 50, -5, 5}, "goodtau1_eta");
 	auto h_n_tau = df_S1_goodmuon.Histo1D({"h_n_tau", "h_n_tau", 5, 0, 5}, "nTau");
-	auto h_n_seltau = df_S2_goodtau.Histo1D({"h_n_seltau", "h_n_seltau", 5, 0, 5}, "n_goodtau");
-	auto h_goodtau1_mother = df_S2_goodtau1_mother.Histo1D({"h_goodtau1_mother","h_goodtau1_mother",100,0,100},"goodtau1_mother");
-	auto h_muon_mother = df_S2_muon_mother.Histo1D({"h_muon_mother","h_muon_mother",100,0,100},"muon_mother");
-	auto h_goodtau2_mother = df_S2_goodtau2_mother.Histo1D({"h_goodtau2_mother","h_goodtau2_mother",100,0,100},"goodtau2_mother");
+	auto h_n_goodtau = df_S2_goodtau.Histo1D({"h_n_goodtau", "h_n_goodtau", 5, 0, 5}, "n_goodtau");
+	auto h_goodtau1_mother = df_S2_goodtau1_mother.Histo1D({"h_goodtau1_mother","h_goodtau1_mother",50,0,50},"goodtau1_mother");
+	auto h_goodtau1_gmother = df_S2_goodtau1_gmother.Histo1D({"h_goodtau1_gmother","h_goodtau1_gmother",50,0,50},"goodtau1_gmother");
+	auto h_taumuon_mother = df_S2_taumuon_mother.Histo1D({"h_taumuon_mother","h_taumuon_mother",50,0,50},"goodtau1_gmother");
+	auto h_taumuonW_mother = df_S2_taumuonW_mother.Histo1D({"h_taumuonW_mother","b_taumuonW_mother",50,0,50},"goodtau1_ggmother");
+	auto h_taumuonmuon_mother = df_S2_taumuonmuon_mother.Histo1D({"h_taumuonmuon_mother","b_taumuonmuon_mother",50,0,50},"goodtau1_ggmother");
+	auto h_goodtau2_mother = df_S2_goodtau2_mother.Histo1D({"h_goodtau2_mother","h_goodtau2_mother",50,0,50},"goodtau2_mother");
+	auto h_n_goodGentau = df_S2_goodGentau.Histo1D({"h_n_goodGentau","h_n_goodGentau",10,0,10},"n_goodGentau");
+	auto h_goodGentau1_mother = df_S2_goodGentau1_mother.Histo1D({"h_goodGentau1_mother","h_goodGentau1_mother",50,0,50},"goodGentau1_mother");
+//	auto h_goodGentau1_gmother = df_S2_goodGentau1_gmother.Histo1D({"h_goodGentau1_gmother","h_goodGentau1_gmother",50,0,50},"goodGentau1_gmother");
+	auto h_goodGentau2_mother = df_S2_goodGentau2_mother.Histo1D({"h_goodGentau2_mother","h_goodGentau2_mother",50,0,50},"goodGentau2_mother");
 
 
 	auto h_goodhadron_Flav = df_S3_goodhadron.Histo1D({"h_goodhadronFlav", "h_goodhadronFlav",10, 0,10}, "goodhadron_Flav");
@@ -502,14 +535,21 @@ void flav_ana_lq(TString input = "LQ"){
 
 	plot( h_muon_pt, "h_muon_pt");
 	plot( h_muon_eta, "h_muon_eta");
-	plot( h_n_selmuon, "h_n_selmuon");
+	plot( h_n_goodmuon, "h_n_goodmuon");
 	plot( h_tau_pt, "h_tau_pt");
 	plot( h_tau_eta, "h_tau_eta");
 	plot( h_n_tau, "h_n_tau");
-	plot( h_n_seltau, "h_n_seltau");
+	plot( h_n_goodtau, "h_n_goodtau");
 	plot( h_goodtau1_mother, "h_goodtau1_mother");
+	plot( h_goodtau1_gmother, "h_goodtau1_gmother");
+	plot( h_taumuon_mother, "h_taumuon_mother");
+	plot( h_taumuonW_mother, "h_taumuonW_mother");
+	plot( h_taumuonmuon_mother, "h_taumuonmuon_mother");
 	plot( h_goodtau2_mother, "h_goodtau2_mother");
-	plot( h_muon_mother, "h_muon_mother");
+	plot( h_n_goodGentau, "h_n_goodGentau");
+	plot( h_goodGentau1_mother, "h_goodGentau1_mother");
+//	plot( h_goodGentau1_gmother, "h_goodGentau1_gmother");
+	plot( h_goodGentau2_mother, "h_goodGentau2_mother");
 
 	plot( h_goodhadron_Flav, "h_goodhadron_Flav");
 	plot( h_n_good_b_hadron, "h_n_good_b_hadron");
