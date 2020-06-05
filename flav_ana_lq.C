@@ -22,6 +22,113 @@ void plot(T hist, TString name){
   c->Print(Form("%s.pdf",name.Data()));
 }
 
+/**********************************TODO*****************************************/
+//Top-reconstruction
+//input:
+//  jet_info: Jet_pt, Jet_eta, Jet_phi, Jet_mass
+//  electron_info: Electron_pt, Electron_eta, Electron_phi, Electron_mass
+//  muon_info: Muon_pt, Muon_eta, Muon_phi, Muon_mass
+//  MET_info: MET_pt, MET_phi, MET_sumEt
+//  index: Jet_idx, tau_jet_idx, muon_idx, sel_b_idx, sel_tau_idx, sel_ele_idx, sel_muon_idx
+//  channel_info:
+//      qq: sel_tau_idx, sel_muon_idx > -1 sel_ele_idx == -1
+//      electron: sel_tau_idx, sel_muon_idx, sel_ele_idx > -1
+//      muon: sel_tau_idx > -1, sel_ele_idx, sel_muon_idx == -1
+//      tau: sel_muon_idx > -1, sel_ele_idx, sel_tau_idx == -1
+//out:
+//  (top_mass, w_mass, antitop_mass, X, selected_idxs)
+//
+rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass,   //Jet
+        float Electron_pt, float Electron_eta, float Electron_phi, float Electron_mass, //Electron
+        rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_phi, rvec_f Muon_mass,                 //Muon
+        float MET_pt, float MET_phi, float MET_sumEt,                                    //MET
+        rvec_i jet_idx, rvec_i tau_jet_idx, rvec_i muon_idx,
+        int b_idx, int sel_tau_idx, int sel_muon_idx){
+    rvec_f out;
+
+    TLorentzVector c_jet, tau, muon, b_jet, from_w_1, from_w_2;
+    float top_mass, w_mass, antitop_mass;
+    float X_top, X_w, X_antitop, X_min=9999999;
+    float X_min_top_mass, X_min_w_mass, X_min_antitop_mass;
+    
+    if (sel_tau_idx > -1){
+        tau_jet_idx.clear();
+        tau_jet_idx.push_back(sel_tau_idx);
+    }
+    if (sel_muon_idx > -1){
+        muon_idx.clear();
+        muon_idx.push_back(sel_muon_idx);
+    }
+
+    //remove b_jet_idx in jet_idx
+    for (int i=0; i<jet_idx.size(); i++){
+        if (jet_idx[i] == b_idx) jet_idx.erase(jet_idx.begin()+i);
+    }
+
+    b_jet.SetPtEtaPhiM(Jet_pt[b_idx], Jet_eta[b_idx], Jet_phi[b_idx], Jet_mass[b_idx]);
+    from_w_1.SetPtEtaPhiE(Electron_pt, Electron_eta, Electron_phi, Electron_mass); //???
+    from_w_2.SetPtEtaPhiE(MET_pt, 0, MET_phi, MET_sumEt);
+
+    for(int i=0; i<jet_idx.size(); i++){
+        c_jet.SetPtEtaPhiM(Jet_pt[jet_idx[i]], Jet_eta[jet_idx[i]], Jet_phi[jet_idx[i]], Jet_mass[jet_idx[i]]);
+        for (int j=0; j<tau_jet_idx.size(); j++){
+            if (tau_jet_idx[j] == jet_idx[i]) continue;
+            tau.SetPtEtaPhiM(Jet_pt[tau_jet_idx[j]], Jet_eta[tau_jet_idx[j]], Jet_phi[tau_jet_idx[j]], Jet_mass[tau_jet_idx[j]]);
+            for (int k=0; k<muon_idx.size(); k++){
+                muon.SetPtEtaPhiM(Muon_pt[muon_idx[k]], Muon_eta[muon_idx[k]], Muon_phi[muon_idx[k]], Muon_mass[muon_idx[k]]);
+                top_mass = (c_jet+tau+muon).M();
+                X_top = (173.0-top_mass)*(173.0-top_mass) / 1.41*1.41;
+
+                for (int l=0; l<jet_idx.size(); l++){
+                    if (sel_tau_idx > -1 && sel_muon_idx == -1 && Electron_pt < 0){ //muon
+                        if (l == muon_idx.size()) break;
+                        if (l == k) continue;
+                        from_w_1.SetPtEtaPhiM(Muon_pt[muon_idx[l]], Muon_eta[muon_idx[l]], Muon_phi[muon_idx[l]], Muon_mass[muon_idx[l]]);
+                    } else if (sel_tau_idx == -1 && sel_muon_idx > -1 && Electron_pt < 0){ //tau
+                        if (l == tau_jet_idx.size()) break;
+                        if (tau_jet_idx[l] == jet_idx[i] or l == j) continue;
+                        from_w_1.SetPtEtaPhiM(Jet_pt[tau_jet_idx[l]], Jet_eta[tau_jet_idx[l]], Jet_phi[tau_jet_idx[l]], Jet_mass[tau_jet_idx[l]]);
+                    }
+                    if (sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt < 0){ //qq
+                        if (l == i or jet_idx[l]==tau_jet_idx[j]) continue;
+                        from_w_1.SetPtEtaPhiM(Jet_pt[jet_idx[l]], Jet_eta[jet_idx[l]], Jet_phi[jet_idx[l]], Jet_mass[jet_idx[l]]);
+                        for (int n=0; n<jet_idx.size(); n++){
+                            if (n == i or jet_idx[n] == tau_jet_idx[j] or n == l) continue;
+                            from_w_2.SetPtEtaPhiM(Jet_pt[jet_idx[n]], Jet_eta[jet_idx[n]], Jet_phi[jet_idx[n]], Jet_mass[jet_idx[n]]);
+
+                            w_mass = (from_w_1 + from_w_2).M();
+                            X_w = (80.379-w_mass)*(80.379-w_mass) / 2.085*2.085;
+                            antitop_mass = (b_jet + from_w_1 + from_w_2).M();
+                            X_antitop = (173.0-antitop_mass)*(173.0-antitop_mass) / 1.41*1.41; 
+                        }
+                    } else{ //electron or muon or tau
+                        w_mass = (from_w_1 + from_w_2).M();
+                        X_w = (80.379-w_mass)*(80.379-w_mass) / 2.085*2.085;
+                        antitop_mass = (b_jet + from_w_1 + from_w_2).M();
+                        X_antitop = (173.0-antitop_mass)*(173.0-antitop_mass) / 1.41*1.41; 
+                    }
+                    if (X_top + X_w + X_antitop < X_min){
+                        X_min = X_top + X_w + X_antitop;
+                        X_min_top_mass = top_mass;
+                        X_min_w_mass = w_mass;
+                        X_min_antitop_mass = antitop_mass;
+                    }
+                    if (Electron_pt >= 0) break;
+                }
+            }
+        }
+    }
+
+    cout << "X: " << X_min << " top: " << X_min_top_mass << " w: " << X_min_w_mass << " antitop: " << X_min_antitop_mass << endl;
+    out.push_back(X_min);
+    out.push_back(X_min_top_mass);
+    out.push_back(X_min_w_mass);
+    out.push_back(X_min_antitop_mass);
+    return out;
+}
+/*******************************************************************************/
+
+
 rvec_i  good_idx(rvec_i good){
   vector<int> out;
   for(int i = 0; i < good.size(); i++){
@@ -120,16 +227,17 @@ float mass_reconst3(int i_idx, rvec_f i_pt, rvec_f i_eta, rvec_f i_phi, rvec_f i
 
 
 void flav_ana_lq(TString input = "LQ"){
-	std::vector<std::string> file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root"};
-	if (input.Contains("LQ")){
-		file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root",
-			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO/200517_045835/0000/LQ_2018_nano_1.root",
-			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO_A1/200523_183528/0000/LQ_2018_nano_1.root"};
-	}else if (input.Contains("ttbar")){
-		 file = {"/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/073462AF-FDD0-AD45-970A-EB97923698F3.root",
-			 "/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/0BFDE5A9-3D64-2A4D-A24E-FFB33CCE19F5.root",
-			 "/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/211ACE36-21BD-CC43-864E-BDBD1CE5FE01.root"};
-	}
+	std::vector<std::string> file = {"/home/itseyes/array/LQ_2018_nano_v1.root"};
+	//std::vector<std::string> file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root"};
+	//if (input.Contains("LQ")){
+	//	file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root",
+	//		"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO/200517_045835/0000/LQ_2018_nano_1.root",
+	//		"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO_A1/200523_183528/0000/LQ_2018_nano_1.root"};
+	//}else if (input.Contains("ttbar")){
+	//	 file = {"/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/073462AF-FDD0-AD45-970A-EB97923698F3.root",
+	//		 "/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/0BFDE5A9-3D64-2A4D-A24E-FFB33CCE19F5.root",
+	//		 "/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/211ACE36-21BD-CC43-864E-BDBD1CE5FE01.root"};
+	//}
 	ROOT::RDataFrame df("Events",file);
 
 	//S1:muon, S2:tau, S3:hadronFlavour, S4:genTtbarId, S5:b,c-tagging, S6:Filter for pt
@@ -220,7 +328,24 @@ void flav_ana_lq(TString input = "LQ"){
 	auto df_S6_good_c_hadron_ifW = df_S6_good_c_hadron.Filter("n_cjet_fromW!=0","Events including c-jet from W")
 				.Filter("Sum(good_c_hadron)>=2", "Events with at least two good c-hadrons") .Define("good_c_hadron2_idx",second_idx,{"good_c_hadron_idx"}); 
 
+        auto df_cmutaubqq = df_S6_good_b_hadron_e1.Filter("Sum(good_c_hadron)>=1 && Sum(goodjet)>=5", "c_muon_tau_b_q_q")
+            .Define("not_ele", "float(-9999.9);")
+            .Define("goodjet_idx", good_idx, {"goodjet"})
+            .Define("goodtau_jet_idx", "Tau_jetIdx[goodtau]")
+            .Define("goodtau1_jet_idx", "Tau_jetIdx[goodtau1_idx]");
+        auto display = df_cmutaubqq.Display({"not_ele","goodjet_idx", "goodtau_jet_idx", "goodtau1_jet_idx", "good_b_hadron_idx"}, 100);
+        display->Print();
  //**** Mass Reconstruction ****//
+        auto df_S7_reco = df_cmutaubqq.Define("reco", top_reconstruction,
+                        {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "not_ele", "not_ele", "not_ele", "not_ele",
+                        "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "MET_pt", "MET_phi", "MET_sumEt",
+                        "goodjet_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
+        display = df_S7_reco.Display({"reco"});
+        display->Print();
+	auto h_X = df_S7_reco.Define("X", "reco[0]").Histo1D({"h_X","h_X",60, 0, 30000}, "X");
+	auto h_top = df_S7_reco.Define("top", "reco[1]").Histo1D({"h_top","h_top",30, 0, 500}, "top");
+	auto h_W = df_S7_reco.Define("W", "reco[2]").Histo1D({"h_W","h_W",30, 0, 500}, "W");
+	auto h_antitop = df_S7_reco.Define("antitop", "reco[3]").Histo1D({"h_antitop","h_antitop",30, 0, 500}, "antitop");
 	auto df_S7_reco_top_toLQ_nfW = df_S6_good_c_hadron_nfW.Define("inv_mass_top_toLQ_nfW",mass_reconst3,
 			{"goodmuon1_idx","Muon_pt","Muon_eta","Muon_phi","Muon_mass",
 			 "good_c_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
@@ -568,6 +693,11 @@ void flav_ana_lq(TString input = "LQ"){
 	plot( h_n_cjet_t, "h_n_cjet_t");
 
 	plot( h_n_original_c_hadron, "h_n_original_c_hadron");
+
+        plot( h_X, "h_X");
+        plot( h_top, "h_top");
+        plot( h_W, "h_W");
+        plot( h_antitop, "h_antitop");
 
 	f.Close();
 
