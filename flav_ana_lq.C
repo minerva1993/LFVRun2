@@ -29,21 +29,22 @@ void plot(T hist, TString name){
 //  electron_info: Electron_pt, Electron_eta, Electron_phi, Electron_mass
 //  muon_info: Muon_pt, Muon_eta, Muon_phi, Muon_mass
 //  MET_info: MET_pt, MET_phi, MET_sumEt
-//  index: Jet_idx, tau_jet_idx, muon_idx, sel_b_idx, sel_tau_idx, sel_muon_idx
-//  channel_info:
+//  index: Jet_idx, c_idx, tau_jet_idx, muon_idx, sel_b_idx, sel_tau_idx, sel_muon_idx
+//out:
+//  rvec_f (X, top_mass, w_mass, antitop_mass)
+//
+//channel_info:
 //      qq:         sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt < 0
 //      electron:   sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt > 0
 //      muon:       sel_tau_idx > -1 && sel_muon_idx == -1 && Electron_pt < 0 
 //      tau:        sel_tau_idx == -1 && sel_muon_idx > -1 && Electron_pt < 0
-//out:
-//  rvec_f (X, top_mass, w_mass, antitop_mass)
 
 rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass,   //Jet
         float Electron_pt, float Electron_eta, float Electron_phi, float Electron_mass,     //Electron
         rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_phi, rvec_f Muon_mass,                 //Muon
         float MET_pt, float MET_phi, float MET_sumEt,                                       //MET
-        rvec_i jet_idx, rvec_i tau_jet_idx, rvec_i muon_idx,
-        int b_idx, int sel_tau_idx, int sel_muon_idx){
+        rvec_i jet_idx, rvec_i c_idx, rvec_i tau_jet_idx, rvec_i muon_idx,
+        int sel_b_idx, int sel_tau_idx, int sel_muon_idx){
     rvec_f out;
 
     TLorentzVector c_jet, tau, muon, b_jet, from_w_1, from_w_2;
@@ -60,19 +61,20 @@ rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f 
         muon_idx.push_back(sel_muon_idx);
     }
 
-    //remove b_jet_idx in jet_idx
+    //remove b_jet_idx in jet_idx & c_idx
     for (int i=0; i<jet_idx.size(); i++){
-        if (jet_idx[i] == b_idx) jet_idx.erase(jet_idx.begin()+i);
+        if (jet_idx[i] == sel_b_idx) jet_idx.erase(jet_idx.begin()+i);
+        if (i < c_idx.size() && c_idx[i] == sel_b_idx) c_idx.erase(c_idx.begin()+i);
     }
 
-    b_jet.SetPtEtaPhiM(Jet_pt[b_idx], Jet_eta[b_idx], Jet_phi[b_idx], Jet_mass[b_idx]);
+    b_jet.SetPtEtaPhiM(Jet_pt[sel_b_idx], Jet_eta[sel_b_idx], Jet_phi[sel_b_idx], Jet_mass[sel_b_idx]);
     from_w_1.SetPtEtaPhiM(Electron_pt, Electron_eta, Electron_phi, Electron_mass); //???
     from_w_2.SetPtEtaPhiE(MET_pt, 0, MET_phi, MET_pt);
 
-    for(int i=0; i<jet_idx.size(); i++){
-        c_jet.SetPtEtaPhiM(Jet_pt[jet_idx[i]], Jet_eta[jet_idx[i]], Jet_phi[jet_idx[i]], Jet_mass[jet_idx[i]]);
+    for(int i=0; i<c_idx.size(); i++){
+        c_jet.SetPtEtaPhiM(Jet_pt[c_idx[i]], Jet_eta[c_idx[i]], Jet_phi[c_idx[i]], Jet_mass[c_idx[i]]);
         for (int j=0; j<tau_jet_idx.size(); j++){
-            if (tau_jet_idx[j] == jet_idx[i]) continue;
+            if (tau_jet_idx[j] == c_idx[i]) continue;
             tau.SetPtEtaPhiM(Jet_pt[tau_jet_idx[j]], Jet_eta[tau_jet_idx[j]], Jet_phi[tau_jet_idx[j]], Jet_mass[tau_jet_idx[j]]);
             for (int k=0; k<muon_idx.size(); k++){
                 muon.SetPtEtaPhiM(Muon_pt[muon_idx[k]], Muon_eta[muon_idx[k]], Muon_phi[muon_idx[k]], Muon_mass[muon_idx[k]]);
@@ -86,14 +88,14 @@ rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f 
                         from_w_1.SetPtEtaPhiM(Muon_pt[muon_idx[l]], Muon_eta[muon_idx[l]], Muon_phi[muon_idx[l]], Muon_mass[muon_idx[l]]);
                     } else if (sel_tau_idx == -1 && sel_muon_idx > -1 && Electron_pt < 0){ //tau
                         if (l == tau_jet_idx.size()) break;
-                        if (tau_jet_idx[l] == jet_idx[i] or l == j) continue;
+                        if (tau_jet_idx[l] == c_idx[i] or l == j) continue;
                         from_w_1.SetPtEtaPhiM(Jet_pt[tau_jet_idx[l]], Jet_eta[tau_jet_idx[l]], Jet_phi[tau_jet_idx[l]], Jet_mass[tau_jet_idx[l]]);
                     }
                     if (sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt < 0){ //qq
-                        if (l == i or jet_idx[l]==tau_jet_idx[j]) continue;
+                        if (jet_idx[l] == c_idx[i] or jet_idx[l]==tau_jet_idx[j]) continue;
                         from_w_1.SetPtEtaPhiM(Jet_pt[jet_idx[l]], Jet_eta[jet_idx[l]], Jet_phi[jet_idx[l]], Jet_mass[jet_idx[l]]);
                         for (int n=0; n<jet_idx.size(); n++){
-                            if (n == i or jet_idx[n] == tau_jet_idx[j] or n == l) continue;
+                            if (jet_idx[n] == c_idx[i] or jet_idx[n] == tau_jet_idx[j] or n == l) continue;
                             from_w_2.SetPtEtaPhiM(Jet_pt[jet_idx[n]], Jet_eta[jet_idx[n]], Jet_phi[jet_idx[n]], Jet_mass[jet_idx[n]]);
 
                             w_mass = (from_w_1 + from_w_2).M();
@@ -331,6 +333,7 @@ void flav_ana_lq(TString input = "LQ"){
         auto df_cmutaubqq = df_S6_good_b_hadron_e1.Filter("Sum(good_c_hadron)>=1 && Sum(goodjet)>=5", "c_muon_tau_b_q_q")
             .Define("not_ele", "float(-9999.9);")
             .Define("goodjet_idx", good_idx, {"goodjet"})
+            .Define("good_c_hadron_idx", good_idx, {"good_c_hadron"})
             .Define("goodtau_jet_idx", "Tau_jetIdx[goodtau]")
             .Define("goodtau1_jet_idx", "Tau_jetIdx[goodtau1_idx]");
 
@@ -345,6 +348,7 @@ void flav_ana_lq(TString input = "LQ"){
             .Define("goodelec1_phi", "Electron_phi[goodelec1_idx]")
             .Define("goodelec1_mass", "Electron_mass[goodelec1_idx]")
             .Define("goodjet_idx", good_idx, {"goodjet"})
+            .Define("good_c_hadron_idx", good_idx, {"good_c_hadron"})
             .Define("goodtau_jet_idx", "Tau_jetIdx[goodtau]")
             .Define("goodtau1_jet_idx", "Tau_jetIdx[goodtau1_idx]");
 
@@ -353,20 +357,18 @@ void flav_ana_lq(TString input = "LQ"){
             {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "goodelec1_pt",
             "goodelec1_eta", "goodelec1_phi", "goodelec1_mass",
             "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "MET_pt", "MET_phi", "MET_sumEt",
-            "goodjet_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
+            "goodjet_idx","good_c_hadron_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
             
             
-        auto display = df_cmutaubenu.Display({"goodelec_idx","goodjet_idx", "goodtau_jet_idx", "goodtau1_jet_idx", "good_b_hadron_idx"}, 100);
-        display->Print();
  //**** Mass Reconstruction ****//
         auto df_S7_reco = df_cmutaubqq.Define("reco", top_reconstruction,
                         {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "not_ele", "not_ele", "not_ele", "not_ele",
                         "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "MET_pt", "MET_phi", "MET_sumEt",
-                        "goodjet_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
-	auto h_X = df_S7_reco_enu.Define("X", "reco[0]").Histo1D({"h_X","h_X",60, 0, 30000}, "X");
-	auto h_top = df_S7_reco_enu.Define("top", "reco[1]").Histo1D({"h_top","h_top",30, 0, 500}, "top");
-	auto h_W = df_S7_reco_enu.Define("W", "reco[2]").Histo1D({"h_W","h_W",30, 0, 500}, "W");
-	auto h_antitop = df_S7_reco_enu.Define("antitop", "reco[3]").Histo1D({"h_antitop","h_antitop",30, 0, 500}, "antitop");
+                        "goodjet_idx", "good_c_hadron_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
+	auto h_X = df_S7_reco.Define("X", "reco[0]").Histo1D({"h_X","h_X",60, 0, 30000}, "X");
+	auto h_top = df_S7_reco.Define("top", "reco[1]").Histo1D({"h_top","h_top",30, 0, 500}, "top");
+	auto h_W = df_S7_reco.Define("W", "reco[2]").Histo1D({"h_W","h_W",30, 0, 500}, "W");
+	auto h_antitop = df_S7_reco.Define("antitop", "reco[3]").Histo1D({"h_antitop","h_antitop",30, 0, 500}, "antitop");
 	auto df_S7_reco_top_toLQ_nfW = df_S6_good_c_hadron_nfW.Define("inv_mass_top_toLQ_nfW",mass_reconst3,
 			{"goodmuon1_idx","Muon_pt","Muon_eta","Muon_phi","Muon_mass",
 			 "good_c_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
