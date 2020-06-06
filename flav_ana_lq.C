@@ -29,28 +29,28 @@ void plot(T hist, TString name){
 //  electron_info: Electron_pt, Electron_eta, Electron_phi, Electron_mass
 //  muon_info: Muon_pt, Muon_eta, Muon_phi, Muon_mass
 //  MET_info: MET_pt, MET_phi, MET_sumEt
-//  index: Jet_idx, tau_jet_idx, muon_idx, sel_b_idx, sel_tau_idx, sel_ele_idx, sel_muon_idx
+//  index: Jet_idx, tau_jet_idx, muon_idx, sel_b_idx, sel_tau_idx, sel_muon_idx
 //  channel_info:
-//      qq: sel_tau_idx, sel_muon_idx > -1 sel_ele_idx == -1
-//      electron: sel_tau_idx, sel_muon_idx, sel_ele_idx > -1
-//      muon: sel_tau_idx > -1, sel_ele_idx, sel_muon_idx == -1
-//      tau: sel_muon_idx > -1, sel_ele_idx, sel_tau_idx == -1
+//      qq:         sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt < 0
+//      electron:   sel_tau_idx > -1 && sel_muon_idx > -1 && Electron_pt > 0
+//      muon:       sel_tau_idx > -1 && sel_muon_idx == -1 && Electron_pt < 0 
+//      tau:        sel_tau_idx == -1 && sel_muon_idx > -1 && Electron_pt < 0
 //out:
-//  (top_mass, w_mass, antitop_mass, X, selected_idxs)
-//
+//  rvec_f (X, top_mass, w_mass, antitop_mass)
+
 rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass,   //Jet
-        float Electron_pt, float Electron_eta, float Electron_phi, float Electron_mass, //Electron
+        float Electron_pt, float Electron_eta, float Electron_phi, float Electron_mass,     //Electron
         rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_phi, rvec_f Muon_mass,                 //Muon
-        float MET_pt, float MET_phi, float MET_sumEt,                                    //MET
+        float MET_pt, float MET_phi, float MET_sumEt,                                       //MET
         rvec_i jet_idx, rvec_i tau_jet_idx, rvec_i muon_idx,
         int b_idx, int sel_tau_idx, int sel_muon_idx){
     rvec_f out;
 
     TLorentzVector c_jet, tau, muon, b_jet, from_w_1, from_w_2;
     float top_mass, w_mass, antitop_mass;
-    float X_top, X_w, X_antitop, X_min=9999999;
-    float X_min_top_mass, X_min_w_mass, X_min_antitop_mass;
-    
+    float X_top, X_w, X_antitop;
+    float X_min=999999999, X_min_top_mass, X_min_w_mass, X_min_antitop_mass;
+
     if (sel_tau_idx > -1){
         tau_jet_idx.clear();
         tau_jet_idx.push_back(sel_tau_idx);
@@ -66,8 +66,8 @@ rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f 
     }
 
     b_jet.SetPtEtaPhiM(Jet_pt[b_idx], Jet_eta[b_idx], Jet_phi[b_idx], Jet_mass[b_idx]);
-    from_w_1.SetPtEtaPhiE(Electron_pt, Electron_eta, Electron_phi, Electron_mass); //???
-    from_w_2.SetPtEtaPhiE(MET_pt, 0, MET_phi, MET_sumEt);
+    from_w_1.SetPtEtaPhiM(Electron_pt, Electron_eta, Electron_phi, Electron_mass); //???
+    from_w_2.SetPtEtaPhiE(MET_pt, 0, MET_phi, MET_pt);
 
     for(int i=0; i<jet_idx.size(); i++){
         c_jet.SetPtEtaPhiM(Jet_pt[jet_idx[i]], Jet_eta[jet_idx[i]], Jet_phi[jet_idx[i]], Jet_mass[jet_idx[i]]);
@@ -119,7 +119,7 @@ rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f 
         }
     }
 
-    cout << "X: " << X_min << " top: " << X_min_top_mass << " w: " << X_min_w_mass << " antitop: " << X_min_antitop_mass << endl;
+    //cout << "X_min: " << X_min << " top: " << X_min_top_mass << " w: " << X_min_w_mass << " antitop: " << X_min_antitop_mass << endl;
     out.push_back(X_min);
     out.push_back(X_min_top_mass);
     out.push_back(X_min_w_mass);
@@ -333,19 +333,40 @@ void flav_ana_lq(TString input = "LQ"){
             .Define("goodjet_idx", good_idx, {"goodjet"})
             .Define("goodtau_jet_idx", "Tau_jetIdx[goodtau]")
             .Define("goodtau1_jet_idx", "Tau_jetIdx[goodtau1_idx]");
-        auto display = df_cmutaubqq.Display({"not_ele","goodjet_idx", "goodtau_jet_idx", "goodtau1_jet_idx", "good_b_hadron_idx"}, 100);
+
+        auto df_cmutaubenu = df_S6_good_b_hadron_e1
+            .Define("goodelec", "Electron_pt>30 && abs(Electron_eta) < 2.4")
+            .Define("n_goodelec", "Sum(goodelec)")
+            .Filter("Sum(good_c_hadron)>=1 && Sum(goodjet)>=3 && n_goodelec>=1", "c_muon_tau_b_e_nu")
+            .Define("goodelec_idx", good_idx,{"goodelec"})
+            .Define("goodelec1_idx", leading_idx,{"goodelec_idx"})
+            .Define("goodelec1_pt", "Electron_pt[goodelec1_idx]")
+            .Define("goodelec1_eta", "Electron_eta[goodelec1_idx]")
+            .Define("goodelec1_phi", "Electron_phi[goodelec1_idx]")
+            .Define("goodelec1_mass", "Electron_mass[goodelec1_idx]")
+            .Define("goodjet_idx", good_idx, {"goodjet"})
+            .Define("goodtau_jet_idx", "Tau_jetIdx[goodtau]")
+            .Define("goodtau1_jet_idx", "Tau_jetIdx[goodtau1_idx]");
+
+        auto df_S7_reco_enu = df_cmutaubenu
+            .Define("reco", top_reconstruction,
+            {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "goodelec1_pt",
+            "goodelec1_eta", "goodelec1_phi", "goodelec1_mass",
+            "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "MET_pt", "MET_phi", "MET_sumEt",
+            "goodjet_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
+            
+            
+        auto display = df_cmutaubenu.Display({"goodelec_idx","goodjet_idx", "goodtau_jet_idx", "goodtau1_jet_idx", "good_b_hadron_idx"}, 100);
         display->Print();
  //**** Mass Reconstruction ****//
         auto df_S7_reco = df_cmutaubqq.Define("reco", top_reconstruction,
                         {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "not_ele", "not_ele", "not_ele", "not_ele",
                         "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass", "MET_pt", "MET_phi", "MET_sumEt",
                         "goodjet_idx", "goodtau_jet_idx", "goodmuon_idx", "good_b_hadron1_idx", "goodtau1_jet_idx", "goodmuon1_idx"});
-        display = df_S7_reco.Display({"reco"});
-        display->Print();
-	auto h_X = df_S7_reco.Define("X", "reco[0]").Histo1D({"h_X","h_X",60, 0, 30000}, "X");
-	auto h_top = df_S7_reco.Define("top", "reco[1]").Histo1D({"h_top","h_top",30, 0, 500}, "top");
-	auto h_W = df_S7_reco.Define("W", "reco[2]").Histo1D({"h_W","h_W",30, 0, 500}, "W");
-	auto h_antitop = df_S7_reco.Define("antitop", "reco[3]").Histo1D({"h_antitop","h_antitop",30, 0, 500}, "antitop");
+	auto h_X = df_S7_reco_enu.Define("X", "reco[0]").Histo1D({"h_X","h_X",60, 0, 30000}, "X");
+	auto h_top = df_S7_reco_enu.Define("top", "reco[1]").Histo1D({"h_top","h_top",30, 0, 500}, "top");
+	auto h_W = df_S7_reco_enu.Define("W", "reco[2]").Histo1D({"h_W","h_W",30, 0, 500}, "W");
+	auto h_antitop = df_S7_reco_enu.Define("antitop", "reco[3]").Histo1D({"h_antitop","h_antitop",30, 0, 500}, "antitop");
 	auto df_S7_reco_top_toLQ_nfW = df_S6_good_c_hadron_nfW.Define("inv_mass_top_toLQ_nfW",mass_reconst3,
 			{"goodmuon1_idx","Muon_pt","Muon_eta","Muon_phi","Muon_mass",
 			 "good_c_hadron1_idx","Jet_pt","Jet_eta","Jet_phi","Jet_mass",
