@@ -1,0 +1,48 @@
+
+Processing flav_ana_lq.C("ttbar")...
+----------qq channel--------------------------
+Least one muon: pass=786338     all=3835000    -- eff=20.50 % cumulative eff=20.50 %
+Least one tau: pass=5956       all=786338     -- eff=0.76 % cumulative eff=0.16 %
+One b jet : pass=2227       all=5956       -- eff=37.39 % cumulative eff=0.06 %
+Least one c jet: pass=995        all=2227       -- eff=44.68 % cumulative eff=0.03 %
+Least three jets: pass=860        all=995        -- eff=86.43 % cumulative eff=0.02 %
+mu1,tau1,elec0(c_mu_tau_b_q_q): pass=853        all=860        -- eff=99.19 % cumulative eff=0.02 %
+c_muon_tau_b_q_q(five loops): pass=228        all=853        -- eff=26.73 % cumulative eff=0.01 %
+chi2_qq updated: pass=163        all=228        -- eff=71.49 % cumulative eff=0.00 %
+LQtop_qq updated: pass=163        all=163        -- eff=100.00 % cumulative eff=0.00 %
+SMW_qq updated: pass=163        all=163        -- eff=100.00 % cumulative eff=0.00 %
+SMtop_qq updated: pass=163        all=163        -- eff=100.00 % cumulative eff=0.00 %
+----------enu channel--------------------------
+Least one muon: pass=786338     all=3835000    -- eff=20.50 % cumulative eff=20.50 %
+Least one tau: pass=5956       all=786338     -- eff=0.76 % cumulative eff=0.16 %
+One b jet : pass=2227       all=5956       -- eff=37.39 % cumulative eff=0.06 %
+Least one c jet: pass=995        all=2227       -- eff=44.68 % cumulative eff=0.03 %
+Least three jets: pass=860        all=995        -- eff=86.43 % cumulative eff=0.02 %
+mu1,tau1,elec1(c_mu_tau_b_e_nu): pass=3          all=860        -- eff=0.35 % cumulative eff=0.00 %
+chi2_enu updated: pass=2          all=3          -- eff=66.67 % cumulative eff=0.00 %
+LQtop_enu updated: pass=2          all=2          -- eff=100.00 % cumulative eff=0.00 %
+SMW_enu updated: pass=2          all=2          -- eff=100.00 % cumulative eff=0.00 %
+SMtop_enu updated: pass=2          all=2          -- eff=100.00 % cumulative eff=0.00 %
+----------munu channel--------------------------
+Least one muon: pass=786338     all=3835000    -- eff=20.50 % cumulative eff=20.50 %
+Least one tau: pass=5956       all=786338     -- eff=0.76 % cumulative eff=0.16 %
+One b jet : pass=2227       all=5956       -- eff=37.39 % cumulative eff=0.06 %
+Least one c jet: pass=995        all=2227       -- eff=44.68 % cumulative eff=0.03 %
+Least three jets: pass=860        all=995        -- eff=86.43 % cumulative eff=0.02 %
+mu2,tau1,elec0(c_mu_tau_b_mu_nu): pass=1          all=860        -- eff=0.12 % cumulative eff=0.00 %
+chi2_munu updated: pass=1          all=1          -- eff=100.00 % cumulative eff=0.00 %
+LQtop_munu updated: pass=1          all=1          -- eff=100.00 % cumulative eff=0.00 %
+SMW_munu updated: pass=1          all=1          -- eff=100.00 % cumulative eff=0.00 %
+SMtop_munu updated: pass=1          all=1          -- eff=100.00 % cumulative eff=0.00 %
+----------taunu channel--------------------------
+Least one muon: pass=786338     all=3835000    -- eff=20.50 % cumulative eff=20.50 %
+Least one tau: pass=5956       all=786338     -- eff=0.76 % cumulative eff=0.16 %
+One b jet : pass=2227       all=5956       -- eff=37.39 % cumulative eff=0.06 %
+Least one c jet: pass=995        all=2227       -- eff=44.68 % cumulative eff=0.03 %
+Least three jets: pass=860        all=995        -- eff=86.43 % cumulative eff=0.02 %
+mu1,tau2,elec0(c_mu_tau_b_tau_nu): pass=3          all=860        -- eff=0.35 % cumulative eff=0.00 %
+c_mu_tau_b_tau_nu(four loops): pass=1          all=3          -- eff=33.33 % cumulative eff=0.00 %
+chi2_taunu updated: pass=0          all=1          -- eff=0.00 % cumulative eff=0.00 %
+LQtop_taunu updated: pass=0          all=0          -- eff=-nan % cumulative eff=0.00 %
+SMW_taunu updated: pass=0          all=0          -- eff=-nan % cumulative eff=0.00 %
+SMtop_taunu updated: pass=0          all=0          -- eff=-nan % cumulative eff=0.00 %
