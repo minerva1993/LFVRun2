@@ -1,0 +1,50 @@
+
+Processing flav_ana_lq.C("semitt")...
+----------qq scenario--------------------------
+Least one muon: pass=16037210   all=78290000   -- eff=20.48 % cumulative eff=20.48 %
+Least one tau: pass=69012      all=16037210   -- eff=0.43 % cumulative eff=0.09 %
+Least three jets: pass=60562      all=69012      -- eff=87.76 % cumulative eff=0.08 %
+One b-tagged jet: pass=26548      all=60562      -- eff=43.84 % cumulative eff=0.03 %
+Least one c-tagged jet: pass=22712      all=26548      -- eff=85.55 % cumulative eff=0.03 %
+mu1,tau1,elec0: pass=22531      all=22712      -- eff=99.20 % cumulative eff=0.03 %
+Six object designation completed: pass=6562       all=22531      -- eff=29.12 % cumulative eff=0.01 %
+chi2_qq updated: pass=6562       all=6562       -- eff=100.00 % cumulative eff=0.01 %
+chi2_qq < 8000: pass=2672       all=6562       -- eff=40.72 % cumulative eff=0.00 %
+chi2_qq < 5000: pass=2099       all=2672       -- eff=78.56 % cumulative eff=0.00 %
+chi2_qq < 3000: pass=1481       all=2099       -- eff=70.56 % cumulative eff=0.00 %
+----------enu scenario--------------------------
+Least one muon: pass=16037210   all=78290000   -- eff=20.48 % cumulative eff=20.48 %
+Least one tau: pass=69012      all=16037210   -- eff=0.43 % cumulative eff=0.09 %
+Least three jets: pass=60562      all=69012      -- eff=87.76 % cumulative eff=0.08 %
+One b-tagged jet: pass=26548      all=60562      -- eff=43.84 % cumulative eff=0.03 %
+Least one c-tagged jet: pass=22712      all=26548      -- eff=85.55 % cumulative eff=0.03 %
+mu>=1,tau>=1,elec1: pass=96         all=22712      -- eff=0.42 % cumulative eff=0.00 %
+Six object designation completed: pass=78         all=96         -- eff=81.25 % cumulative eff=0.00 %
+chi2_enu updated: pass=78         all=78         -- eff=100.00 % cumulative eff=0.00 %
+chi2_enu < 8000: pass=51         all=78         -- eff=65.38 % cumulative eff=0.00 %
+chi2_enu < 5000: pass=46         all=51         -- eff=90.20 % cumulative eff=0.00 %
+chi2_enu < 3000: pass=38         all=46         -- eff=82.61 % cumulative eff=0.00 %
+----------munu scenario--------------------------
+Least one muon: pass=16037210   all=78290000   -- eff=20.48 % cumulative eff=20.48 %
+Least one tau: pass=69012      all=16037210   -- eff=0.43 % cumulative eff=0.09 %
+Least three jets: pass=60562      all=69012      -- eff=87.76 % cumulative eff=0.08 %
+One b-tagged jet: pass=26548      all=60562      -- eff=43.84 % cumulative eff=0.03 %
+Least one c-tagged jet: pass=22712      all=26548      -- eff=85.55 % cumulative eff=0.03 %
+mu>=2,tau>=1,elec0: pass=34         all=22712      -- eff=0.15 % cumulative eff=0.00 %
+Six object designation completed: pass=27         all=34         -- eff=79.41 % cumulative eff=0.00 %
+chi2_munu updated: pass=27         all=27         -- eff=100.00 % cumulative eff=0.00 %
+chi2_munu < 8000: pass=21         all=27         -- eff=77.78 % cumulative eff=0.00 %
+chi2_munu < 5000: pass=21         all=21         -- eff=100.00 % cumulative eff=0.00 %
+chi2_munu < 3000: pass=17         all=21         -- eff=80.95 % cumulative eff=0.00 %
+----------taunu scenario--------------------------
+Least one muon: pass=16037210   all=78290000   -- eff=20.48 % cumulative eff=20.48 %
+Least one tau: pass=69012      all=16037210   -- eff=0.43 % cumulative eff=0.09 %
+Least three jets: pass=60562      all=69012      -- eff=87.76 % cumulative eff=0.08 %
+One b-tagged jet: pass=26548      all=60562      -- eff=43.84 % cumulative eff=0.03 %
+Least one c-tagged jet: pass=22712      all=26548      -- eff=85.55 % cumulative eff=0.03 %
+mu1,tau2,elec0: pass=51         all=22712      -- eff=0.22 % cumulative eff=0.00 %
+Six object designation completed: pass=30         all=51         -- eff=58.82 % cumulative eff=0.00 %
+chi2_taunu updated: pass=30         all=30         -- eff=100.00 % cumulative eff=0.00 %
+chi2_taunu < 8000: pass=19         all=30         -- eff=63.33 % cumulative eff=0.00 %
+chi2_taunu < 5000: pass=17         all=19         -- eff=89.47 % cumulative eff=0.00 %
+chi2_taunu < 3000: pass=13         all=17         -- eff=76.47 % cumulative eff=0.00 %
