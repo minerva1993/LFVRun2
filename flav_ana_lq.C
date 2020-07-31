@@ -152,12 +152,89 @@ rvec_f top_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f 
     out.push_back(X_min_SMtop_mass);
     return out;
 }
+
+rvec_f ditt_reconstruction(rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_mass, //b sorted jet
+		rvec_f Tau_pt, rvec_f Tau_eta, rvec_f Tau_phi, rvec_f Tau_mass,
+		rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_phi, rvec_f Muon_mass,
+		float MET_pt, float MET_phi, int pz_range,
+		rvec_i goodjet_idx, rvec_i goodtau_idx, rvec_i goodmuon_idx){
+	rvec_f out;
+
+	TLorentzVector jet1, jet2, tau, muon, MET1, MET2, W1, W2, top1, top2;
+	int jet1_idx, jet2_idx, tau_idx, muon_idx;
+	float W1_mass, W2_mass, top1_mass, top2_mass;
+	float X_W1, X_W2, X_top1, X_top2;
+	float X_min=999999999999999, W1_mass_X_min=-1, W2_mass_X_min=-1,top1_mass_X_min=-1,top2_mass_X_min=-1;
+
+	for( int pz1 = -pz_range; pz1 <= pz_range; pz1 +=10){
+		for( int pz2 = -pz_range; pz2 <= pz_range; pz2 +=10){
+			for( int pt1 = 0; pt1 < MET_pt; pt1 +=10){
+				int pt2 = MET_pt - pt1;
+				MET1.SetPtEtaPhiE(pt1,0,MET_phi,pt1);
+				MET1.SetPz(pz1);
+				MET2.SetPtEtaPhiE(pt2,0,MET_phi,pt2);
+				MET2.SetPz(pz2);
+
+				for( int j1=0; j1 < goodjet_idx.size(); j1++ ){
+					for( int j2=0; j2 < goodjet_idx.size(); j2++ ){
+						if( j1 != j2 ){
+							jet1_idx = goodjet_idx[j1];
+							jet2_idx = goodjet_idx[j2];
+							jet1.SetPtEtaPhiE(Jet_pt[jet1_idx],Jet_eta[jet1_idx],Jet_phi[jet1_idx],Jet_mass[jet1_idx]);
+							jet2.SetPtEtaPhiE(Jet_pt[jet2_idx],Jet_eta[jet2_idx],Jet_phi[jet2_idx],Jet_mass[jet2_idx]);
+
+							for( int t=0 ; t < goodtau_idx.size(); t++ ){
+								for( int m=0; m < goodmuon_idx.size(); m++){
+									tau_idx = goodtau_idx[t];
+									muon_idx = goodmuon_idx[m];
+									tau.SetPtEtaPhiE(Tau_pt[tau_idx],Tau_eta[tau_idx],Tau_phi[tau_idx],Tau_mass[tau_idx]);
+									muon.SetPtEtaPhiE(Muon_pt[muon_idx],Muon_eta[muon_idx],Muon_phi[muon_idx],Muon_mass[muon_idx]);
+
+									W1 = tau + MET1; 
+									W2 = muon + MET2;
+									W1_mass = W1.M();
+									W2_mass = W2.M();
+
+									top1 = W1 + jet1;
+									top2 = W2 + jet2;
+									top1_mass = top1.M();
+									top2_mass = top2.M();
+
+									X_W1 = (80.379 - W1_mass)*(80.379 - W1_mass) / (2.085*2.085);
+									X_W1 = (80.379 - W2_mass)*(80.379 - W2_mass) / (2.085*2.085);
+									X_top1 = (173.0 - top1_mass)*(173.0 - top1_mass) / (1.41*1.41);
+									X_top2 = (173.0 - top2_mass)*(173.0 - top2_mass) / (1.41*1.41);
+
+									if ( X_W1 + X_W2 + X_top1 + X_top2 < X_min ){
+										X_min = X_W1 + X_W2 + X_top1 + X_top2;
+										W1_mass_X_min = W1_mass;  
+										W2_mass_X_min = W2_mass;
+										top1_mass_X_min = top1_mass;
+										top2_mass_X_min = top2_mass;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	out.emplace_back(X_min);
+	out.emplace_back(W1_mass_X_min);
+	out.emplace_back(W2_mass_X_min);
+	out.emplace_back(top1_mass_X_min);
+	out.emplace_back(top2_mass_X_min);
+	return out;
+}
+
 void flav_ana_lq(TString input = "LQ"){
 	std::vector<std::string> file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root"};
 	if (input.Contains("LQ")){
-		file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root",
-			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO/200517_045835/0000/LQ_2018_nano_1.root",
-			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO_A1/200523_183528/0000/LQ_2018_nano_1.root"};
+		file = {"/cms/ldap_home/ljw1015/public/LQ_Signals/LQ_2018_nano.root"};
+//			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO/200517_045835/0000/LQ_2018_nano_1.root",
+//			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO_A1/200523_183528/0000/LQ_2018_nano_1.root",
+//			"/T2_KR_KISTI/store/user/jolim/LQ_2018/LQ_2018NANO_B1/200719_193534/0000/*"};
 	}else if (input.Contains("semitt")){
 		file = {"/xrootd/store/mc/RunIIAutumn18NanoAODv6/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/230000/*.root"};
 	}else if (input.Contains("ditt")){
@@ -218,7 +295,7 @@ void flav_ana_lq(TString input = "LQ"){
 
 
 	//**** Top Mass Reconstruction****//
-
+/*
 		// qq scenario
 	auto df_S5_qq = df_S4_base.Filter("n_goodmuon == 1 && n_goodtau == 1 && n_goodelec == 0", "mu1,tau1,elec0");
 //																	 .Filter("Sum(goodjet)>=5", "c_muon_tau_b_q_q(five loops)");
@@ -290,6 +367,18 @@ void flav_ana_lq(TString input = "LQ"){
 
 
 
+*/
+
+	//////////Top Reconstruction Dileptonic ttbar Scenario (b,tau,nu/b,mu,nu)//////////
+	auto df_S6_reco_ditt = df_S4_base.Define("Ditt_reco",ditt_reconstruction,
+			{"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "Tau_pt", "Tau_eta", "Tau_phi", "Tau_mass", "Muon_pt", "Muon_eta", "Muon_phi", "Muon_mass",
+			 "MET_pt", "MET_phi", "pz_range", "goodjet_idx", "goodtau_idx", "goodmuon_idx"})
+																	 .Define("chi2_ditt", "Ditt_reco[0]")
+																	 .Define("W1_ditt", "Ditt_reco[1]")
+																	 .Define("W2_ditt", "Ditt_reco[2]")
+																	 .Define("top1_ditt", "Ditt_reco[3]")
+																	 .Define("top2_ditt", "Ditt_reco[4]");
+
 	//**** Histograms ****//
 	auto h_muon_pt = df_S1_goodmuon.Define("goodmuon1_pt","Muon_pt[goodmuon1_idx]").Histo1D({"h_muon_pt", "h_muon_pt", 10, 0, 100}, "goodmuon1_pt");
 	auto h_muon_eta = df_S1_goodmuon.Define("goodmuon1_eta","Muon_eta[goodmuon1_idx]").Histo1D({"h_muon_eta", "h_muon_eta", 50, -5, 5}, "goodmuon1_eta");
@@ -312,7 +401,7 @@ void flav_ana_lq(TString input = "LQ"){
 	auto h_n_goodelec21 = cate21.Histo1D({"h_n_goodelec21","h_n_goodelec21",5,0,5},"n_goodelec");
 	auto h_n_goodelec22 = cate22.Histo1D({"h_n_goodelec22","h_n_goodelec22",5,0,5},"n_goodelec");
 	auto h_n_goodelec23 = cate23.Histo1D({"h_n_goodelec23","h_n_goodelec23",5,0,5},"n_goodelec");
-
+/*
 	auto h_chi2_qq = df_S5_reco_qq.Histo1D({"h_chi2_qq","h_chi2_qq",30, 0, 30000}, "chi2_qq");
 	auto h_LQtop_qq_invm = df_S5_reco_qq.Histo1D({"h_LQtop_qq_invm","h_LQtop_qq_invm",25, 0, 500}, "LQtop_qq");
 	auto h_SMW_qq_invm = df_S5_reco_qq.Histo1D({"h_SMW_qq_invm","h_SMW_qq_invm",25, 0, 500}, "SMW_qq");
@@ -392,6 +481,12 @@ void flav_ana_lq(TString input = "LQ"){
 	auto h_LQtop_taunu_invm_cut3 = df_S5_reco_taunu_cut3.Histo1D({"h_LQtop_taunu_invm_cut3","h_LQtop_taunu_invm_cut3",25, 0, 500}, "LQtop_taunu");
 	auto h_SMW_taunu_invm_cut3 = df_S5_reco_taunu_cut3.Histo1D({"h_SMW_taunu_invm_cut3","h_SMW_taunu_invm_cut3",25, 0, 500}, "SMW_taunu");
 	auto h_SMtop_taunu_invm_cut3 = df_S5_reco_taunu_cut3.Histo1D({"h_SMtop_taunu_invm_cut3","h_SMtop_taunu_invm_cut3",25, 0, 500}, "SMtop_taunu");
+*/
+	auto h_chi2_ditt = df_S6_reco_ditt.Histo1D({"h_chi2_ditt", "h_chi2_ditt",60,0,60000}, "chi2_ditt"); 
+	auto h_W1_ditt = df_S6_reco_ditt.Histo1D({"h_W1_ditt", "h_W1_ditt",50,0,500}, "W1_ditt"); 
+	auto h_W2_ditt = df_S6_reco_ditt.Histo1D({"h_W2_ditt", "h_W2_ditt",50,0,500}, "W2_ditt"); 
+	auto h_top1_ditt = df_S6_reco_ditt.Histo1D({"h_top1_ditt", "h_top1_ditt",50,0,500}, "top1_ditt"); 
+	auto h_top2_ditt = df_S6_reco_ditt.Histo1D({"h_top2_ditt", "h_top2_ditt",50,0,500}, "top2_ditt"); 
 
 	//df_S1_goodmuon.Snapshot("tree", "f.root");
 	TString fname = "default_fname";
@@ -425,7 +520,7 @@ void flav_ana_lq(TString input = "LQ"){
 	plot( h_n_goodelec21, "h_n_goodelec21");
 	plot( h_n_goodelec22, "h_n_goodelec22");
 	plot( h_n_goodelec23, "h_n_goodelec23");
-
+/*
 	plot( h_chi2_qq, "h_chi2_qq");
 	plot( h_LQtop_qq_invm, "h_LQtop_qq_invm");
 	plot( h_SMW_qq_invm, "h_SMW_qq_invm");
@@ -505,9 +600,16 @@ void flav_ana_lq(TString input = "LQ"){
 	plot( h_LQtop_taunu_invm_cut3, "h_LQtop_taunu_invm_cut3");
 	plot( h_SMW_taunu_invm_cut3, "h_SMW_taunu_invm_cut3");
 	plot( h_SMtop_taunu_invm_cut3, "h_SMtop_taunu_invm_cut3");
+*/
+
+	plot( h_chi2_ditt, "h_chi2_ditt");
+	plot( h_W1_ditt, "h_W1_ditt");
+	plot( h_W2_ditt, "h_W2_ditt");
+	plot( h_top1_ditt, "h_top1_ditt");
+	plot( h_top2_ditt, "h_top2_ditt");
 
 	f.Close();
-
+/*
 //	auto report = df_S7_base.Report();  report->Print();
   cout << "----------qq scenario--------------------------" << endl;
 	auto report_qq = df_S5_reco_qq_cut1.Report();  report_qq ->Print();
@@ -517,5 +619,5 @@ void flav_ana_lq(TString input = "LQ"){
 	auto report_munu = df_S5_reco_munu_cut1.Report();  report_munu ->Print();
   cout << "----------taunu scenario--------------------------" << endl;
 	auto report_taunu = df_S5_reco_taunu_cut1.Report();  report_taunu ->Print();
-
+*/
 }
