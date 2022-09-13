@@ -10,9 +10,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-R', '--ratio', dest='ratio', action='store_true', default=False)
 parser.add_argument('-S', '--significance', dest='significance', action='store_true', default=False)
 parser.add_argument('-L', '--logstyle', dest='logstyle', action='store_true', default=False)
-parser.add_argument('-Y', '--year', dest='year', type=str, default="")
+parser.add_argument('-Y', '--year', dest='year', type=str, default="18")
 parser.add_argument('-SYS', '--systematic', dest='systematic', type=str, default="norm")
-parser.add_argument('-B', '--blind', dest='isblind', action='store_true', default=False)
+parser.add_argument('-B', '--blind', dest='isblind', action='store_true', default=True)
 args = parser.parse_args()
 logstyle = args.logstyle
 ratio = args.ratio

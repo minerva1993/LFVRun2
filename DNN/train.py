@@ -26,7 +26,8 @@ class_names = ["sig", "bkg"]
 #def auroc(y_true, y_pred):
 #    return tf.py_func(roc_auc_score, (y_true, y_pred[:,1]), tf.double)
 
-for p in ["ST","TT"]:
+#for p in ["ST","TT"]:
+for p in ["TT"]:
     print("Start "+p+" LFV Training")
     epochs = 1000
     inputvars = []
@@ -46,10 +47,11 @@ for p in ["ST","TT"]:
     elif p == "TT":
         inputvars = ["Sel_muon1pt","Sel_muon1eta",
             "Sel_tau1pt","Sel_tau1eta","Sel_tau1mass",
-            "Sel2_jet1pt","Sel2_jet2pt","Sel2_jet3pt","Sel2_jet4pt",
-            "Sel2_jet1eta","Sel2_jet2eta","Sel2_jet3eta","Sel2_jet4eta",
-            "Sel2_jet1mass","Sel2_jet2mass","Sel2_jet3mass","Sel2_jet4mass",
-            "Sel2_jet1btag","Sel2_jet2btag","Sel2_jet3btag","Sel2_jet4btag",
+            "Sel2_jet1pt","Sel2_jet2pt","Sel2_jet3pt",
+	    "Sel2_jet4pt","Sel2_jet4eta", "Sel2_jet4btag","Sel2_jet4mass",
+            "Sel2_jet1eta","Sel2_jet2eta","Sel2_jet3eta",
+            "Sel2_jet1mass","Sel2_jet2mass","Sel2_jet3mass",
+            "Sel2_jet1btag","Sel2_jet2btag","Sel2_jet3btag",
             "Sys_METpt","Sys_METphi",
             "chi2","chi2_lfvTop_mass","chi2_SMW_mass","chi2_SMTop_mass",
             "chi2_wqq_dEta","chi2_wqq_dPhi","chi2_wqq_dR",
@@ -61,7 +63,7 @@ for p in ["ST","TT"]:
         sbratio = 1 # sig:bkg = 1:1
 
     #project_dir = "nanoaodframe_"+p+"LFV/"+processed+"_"+syst+"/"
-    project_dir = "/home/itseyes/github/LFVRun2_ndf_integration/nanoaodframe/aug22_stlfv/nom/"
+    project_dir = "/home/itseyes/github/LFVRun2_ndf_integration/nanoaodframe/aug22_ttlfv/nom/"
     #sig_filedir = root_dir+project_dir+p+"_LFV_nom.root"
     sig_filedir = project_dir+p+"_LFV_nom.root"
     #bkg1_filedir = root_dir+project_dir+"TTTo2L2Nu_nom.root"

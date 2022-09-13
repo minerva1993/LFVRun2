@@ -11,18 +11,20 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from utils.hists import *
 
 base_dir = os.getcwd().replace("DNN","") # Upper directory
-processed = "mar_02"
+processed = "aug22"
 label = "rerun"
-systs = ["norm","jesup","jesdown",
-        "puup","pudown","btagup_jes","btagdown_jes",
-        "btagup_hf","btagdown_hf","btagup_lf","btagdown_lf",
+systs = ["nom",#"jesup","jesdown",
+        #"puup","pudown","btagup_jes","btagdown_jes",
+        #"btagup_hf","btagdown_hf","btagup_lf","btagdown_lf",
         ]
 #systs = ["jesup","jesdown",
 #systs = ["norm","jesup","jesdown","puup","pudown",]
 #systs = ["btagup_jes","btagdown_jes","btagup_hf","btagdown_hf","btagup_lf","btagdown_lf",]
 for syst in systs:
-    for y in ["16pre","16post","17","18"]:
-        for p in ["ST","TT"]:
+    #for y in ["16pre","16post","17","18"]:
+    for y in ["18"]:
+        #for p in ["ST","TT"]:
+        for p in ["ST"]:
             print("Start "+p+" LFV Evaluation")
             inputvars = []
             if p == "ST":
@@ -53,8 +55,10 @@ for syst in systs:
                     "mutau_mass","mutau_dEta","mutau_dPhi","mutau_dR",
                     ]
 
-            project_dir = "nanoaodframe_"+p+"LFV/"+processed+"_"+syst+"/"+y+"/"    # MODIFY!!!
-            path = base_dir+project_dir
+            #project_dir = "nanoaodframe_"+p+"LFV/"+processed+"_"+syst+"/"+y+"/"    # MODIFY!!!
+            project_dir = "/home/itseyes/github/LFVRun2_ndf_integration/nanoaodframe/aug22_stlfv/"+syst+"/"+y+"/"    # MODIFY!!!
+            #path = base_dir+project_dir
+            path = project_dir
             flist = os.listdir(path)
             flist = [i for i in flist if ".root" in i]
             

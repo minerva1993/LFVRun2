@@ -4,7 +4,7 @@ then
     echo "No Input Argument"
 else
     #systs=( norm jesup jesdown puup pudown btagup_jes btagdown_jes btagup_hf btagdown_hf btagup_lf btagdown_lf )
-    systs=( norm )
+    systs=( nom )
     for syst in "${systs[@]}"; do
         cd ${1}/${syst}/pred_hists/
         rm -rf Run2_${syst}_pred.root
@@ -15,7 +15,8 @@ else
 #        rm -rf *blind/*
         mkdir -p simple
         rm -rf simple/*
-        for i in run2 16pre 16post 17 18
+        #for i in run2 16pre 16post 17 18
+        for i in 18
         do
             python ../../../drawhists.py -SYS ${syst} -Y $i -B
             python ../../../drawhists.py -SYS ${syst} -Y $i -L -B
