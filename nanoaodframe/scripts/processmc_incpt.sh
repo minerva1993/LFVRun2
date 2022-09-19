@@ -48,6 +48,7 @@ mkdir -p ${target}
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-200To400 ${target}/WJetsToLNu_HT-200To400_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-200To400_16pre_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-400To600 ${target}/WJetsToLNu_HT-400To600_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-400To600_16pre_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-600To800 ${target}/WJetsToLNu_HT-600To800_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-600To800_16pre_${syst}.out &
+sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-800To1200 ${target}/WJetsToLNu_HT-800To1200_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-800To1200_16pre_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-1200To2500 ${target}/WJetsToLNu_HT-1200To2500_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-1200To2500_16pre_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16pre -S ${syst} --globaltag Summer19UL16APV_V7 ${mc16pre}/WJetsToLNu_HT-2500ToInf ${target}/WJetsToLNu_HT-2500ToInf_16pre_${syst}.root &> ${target}/WJetsToLNu_HT-2500ToInf_16pre_${syst}.out &
@@ -87,6 +88,7 @@ sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-200To400 ${target}/WJetsToLNu_HT-200To400_16post_${syst}.root &> ${target}/WJetsToLNu_HT-200To400_16post_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-400To600 ${target}/WJetsToLNu_HT-400To600_16post_${syst}.root &> ${target}/WJetsToLNu_HT-400To600_16post_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-600To800 ${target}/WJetsToLNu_HT-600To800_16post_${syst}.root &> ${target}/WJetsToLNu_HT-600To800_16post_${syst}.out &
+sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-800To1200 ${target}/WJetsToLNu_HT-800To1200_16post_${syst}.root &> ${target}/WJetsToLNu_HT-800To1200_16post_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-1200To2500 ${target}/WJetsToLNu_HT-1200To2500_16post_${syst}.root &> ${target}/WJetsToLNu_HT-1200To2500_16post_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 16post -S ${syst} --globaltag Summer19UL16_V7 ${mc16post}/WJetsToLNu_HT-2500ToInf ${target}/WJetsToLNu_HT-2500ToInf_16post_${syst}.root &> ${target}/WJetsToLNu_HT-2500ToInf_16post_${syst}.out &
@@ -128,6 +130,7 @@ sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-100To200 ${target}/WJetsToLNu_HT-100To200_17_${syst}.root &> ${target}/WJetsToLNu_HT-100To200_17_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-200To400 ${target}/WJetsToLNu_HT-200To400_17_${syst}.root &> ${target}/WJetsToLNu_HT-200To400_17_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-400To600 ${target}/WJetsToLNu_HT-400To600_17_${syst}.root &> ${target}/WJetsToLNu_HT-400To600_17_${syst}.out &
+sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-600To800 ${target}/WJetsToLNu_HT-600To800_17_${syst}.root &> ${target}/WJetsToLNu_HT-600To800_17_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-800To1200 ${target}/WJetsToLNu_HT-800To1200_17_${syst}.root &> ${target}/WJetsToLNu_HT-800To1200_17_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 17 -S ${syst} --globaltag Summer19UL17_V5 ${mc17}/WJetsToLNu_HT-1200To2500 ${target}/WJetsToLNu_HT-1200To2500_17_${syst}.root &> ${target}/WJetsToLNu_HT-1200To2500_17_${syst}.out &
@@ -169,6 +172,7 @@ sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-100To200 ${target}/WJetsToLNu_HT-100To200_18_${syst}.root &> ${target}/WJetsToLNu_HT-100To200_18_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-200To400 ${target}/WJetsToLNu_HT-200To400_18_${syst}.root &> ${target}/WJetsToLNu_HT-200To400_18_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-400To600 ${target}/WJetsToLNu_HT-400To600_18_${syst}.root &> ${target}/WJetsToLNu_HT-400To600_18_${syst}.out &
+sleep 15m
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-600To800 ${target}/WJetsToLNu_HT-600To800_18_${syst}.root &> ${target}/WJetsToLNu_HT-600To800_18_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-800To1200 ${target}/WJetsToLNu_HT-800To1200_18_${syst}.root &> ${target}/WJetsToLNu_HT-800To1200_18_${syst}.out &
 ./processnanoaod.py --analyzer ${ana} -A -Y 18 -S ${syst} --globaltag Summer19UL18_V5 ${mc18}/WJetsToLNu_HT-1200To2500 ${target}/WJetsToLNu_HT-1200To2500_18_${syst}.root &> ${target}/WJetsToLNu_HT-1200To2500_18_${syst}.out &

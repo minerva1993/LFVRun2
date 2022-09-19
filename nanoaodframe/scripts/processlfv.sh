@@ -25,7 +25,7 @@ ana=$1          # stlfv or ttlfv
 #syst=down_jesAbsolute_year
 #syst=down_jesBBEC1_year
 #syst=down_jesEC2_year
-syst=up_jesRelativeSample_year
+syst=down_jesRelativeSample_year
 target=${label}_${ana}/${syst} # Arbitrary folder name
 mkdir -p ${target}
 # 16pre

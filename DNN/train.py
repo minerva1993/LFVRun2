@@ -17,8 +17,7 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 root_dir = os.getcwd().replace("DNN","") # Upper directory
 # MODIFY !!!
-processed = "mar_02"
-syst = "norm"
+syst = "nom"
 label = "rerun"
 class_names = ["sig", "bkg"]
 
@@ -27,6 +26,7 @@ class_names = ["sig", "bkg"]
 #    return tf.py_func(roc_auc_score, (y_true, y_pred[:,1]), tf.double)
 
 for p in ["ST","TT"]:
+    processed = "aug22_"+p.lower()+"lfv"
     print("Start "+p+" LFV Training")
     epochs = 1000
     inputvars = []
@@ -60,11 +60,11 @@ for p in ["ST","TT"]:
             ]
         sbratio = 1 # sig:bkg = 1:1
 
-    project_dir = "nanoaodframe_"+p+"LFV/"+processed+"_"+syst+"/"
-    sig_filedir = root_dir+project_dir+p+"_LFV_norm.root"
-    bkg1_filedir = root_dir+project_dir+"TTTo2L2Nu_norm.root"
-    bkg2_filedir = root_dir+project_dir+"TTToSemiLeptonic_norm.root"
-    train_outdir = label+"_"+p+processed+"/"+syst
+    project_dir = "nanoaodframe/"+processed+"/"+syst+"/"
+    sig_filedir = root_dir+project_dir+p+"_LFV_nom.root"
+    bkg1_filedir = root_dir+project_dir+"TTTo2L2Nu_nom.root"
+    bkg2_filedir = root_dir+project_dir+"TTToSemiLeptonic_nom.root"
+    train_outdir = label+"_"+processed+"/"+syst
     os.makedirs(train_outdir, exist_ok=True)
 
     sig_tree = uproot.open(sig_filedir)["outputTree2"]
