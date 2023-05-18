@@ -32,7 +32,6 @@
 #include "correction.h"
 
 using namespace ROOT::RDF;
-using namespace correction;
 
 
 class NanoAODAnalyzerrdframe {
