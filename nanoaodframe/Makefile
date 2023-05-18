@@ -7,9 +7,9 @@ corliblib = $(shell a=`correction config --libdir`; echo $${a%%python*lib})
 corlibflag := $(shell correction config --cflags --ldflags --rpath)
 SOFLAGS = -shared
 
-LD = g++ -m64 -g -Wall
+LD = g++ -g -Wall
 
-CXXFLAGS = -O0 -g -Wall -fmessage-length=0 $(rootflags) -fpermissive -fPIC -pthread -DSTANDALONE -I. -I$(corlibincl)
+CXXFLAGS = -O2 -g -Wall -fmessage-length=0 $(rootflags) -fpermissive -fPIC -pthread -DSTANDALONE $(corlibflag) -I.
 
 OBJDIR=src
 SRCDIR=src
@@ -28,8 +28,7 @@ clean:
 
 $(SRCDIR)/rootdict.C: $(SRCDIR)/NanoAODAnalyzerrdframe.h $(SRCDIR)/TopLFVAnalyzer.h $(SRCDIR)/SkimEvents.h $(SRCDIR)/Linkdef.h
 	rm -f $@
-	rootcint $@ -I$(corlibincl) -I$(SRCDIR) $^
-	rm -f rootdict_rdict.pcm
+	rootcint -v $@ -c $(rootflags2) $^
 	ln -s $(SRCDIR)/rootdict_rdict.pcm .
 
 	
@@ -53,3 +52,4 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LIBS_EXE)
+

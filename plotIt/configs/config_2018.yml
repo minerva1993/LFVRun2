@@ -25,7 +25,7 @@ files:
   include: ['files_2018.yml']
 
 systematics:
-  - tt_xsec: {type: const, value: 1.044, on: 'TTTo'}
+  - tt_xsec: {type: const, value: 1.055, on: 'TTTo'}
   - other_xsec1: {type: const, value: 1.1, on: 'DYJetsToLL'}
   - other_xsec2: {type: const, value: 1.1, on: 'ST_s'}
   - other_xsec3: {type: const, value: 1.1, on: 'ST_t'}

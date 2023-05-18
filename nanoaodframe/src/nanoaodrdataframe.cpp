@@ -10,19 +10,19 @@
 #include <stdlib.h>
 #include <string>
 #include "NanoAODAnalyzerrdframe.h"
-#include "TopLFVAnalyzer.h"
+#include "LQtopAnalyzer.h"
 #include "TChain.h"
 
 using namespace std;
 using namespace ROOT;
 
 int main(void) {
-  TChain c1("outputTree");
-  c1.Add("processed/2016data/2016b/00/nanoAOD_3_analyzed.root");
+	TChain c1("outputTree");
+	c1.Add("processed/2016data/2016b/00/nanoAOD_3_analyzed.root");
 
-  TopLFVAnalyzer nanoaodrdf(&c1, "testout.root", "2016pre", "", "data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt", "", 1);
-  nanoaodrdf.setupAnalysis();
-  nanoaodrdf.run(false, "Events");
+	LQtopAnalyzer nanoaodrdf(&c1, "testout.root", "data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt");
+	nanoaodrdf.setupAnalysis();
+	nanoaodrdf.run(false, "outputTree2");
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
