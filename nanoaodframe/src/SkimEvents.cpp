@@ -29,7 +29,8 @@ void SkimEvents::defineCuts()
   } else if (_year.find("17") != std::string::npos) {
       addCuts("Flag_filter && HLT_IsoMu27 && nmuonpass == 1 && PV_npvsGood > 0","0");
   } else if (_year.find("18") != std::string::npos) {
-      addCuts("Flag_filter && HLT_IsoMu24 && nmuonpass == 1 && PV_npvsGood > 0","0");
+      //addCuts("Flag_filter && HLT_IsoMu24 && nmuonpass == 1 && PV_npvsGood > 0","0");
+      addCuts("Flag_filter && (HLT_Mu50 || HLT_OldMu100 || HLT_TkMu100) && nmuonpass == 1 && PV_npvsGood > 0","0");
   }
   //Prescription to fill up WJets HT = 0-100
   if (_isHTstitching)

@@ -306,7 +306,8 @@ void NanoAODAnalyzerrdframe::selectElectrons() {
 
 void NanoAODAnalyzerrdframe::selectMuons() {
 
-    _rlm = _rlm.Define("muoncuts", "Muon_pt>50.0 && abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfRelIso04_all<0.15")
+    //_rlm = _rlm.Define("muoncuts", "Muon_pt>50.0 && abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfRelIso04_all<0.15")
+    _rlm = _rlm.Define("muoncuts", "Muon_pt>53.0 && abs(Muon_eta)<2.4 && Muon_highPtId & 2 && Muon_tkIsoId >= 1")
                .Define("vetomuoncuts", "!muoncuts && Muon_pt>15.0 && abs(Muon_eta)<2.4 && Muon_looseId && Muon_pfRelIso04_all<0.25")
                .Define("nvetomuons","Sum(vetomuoncuts)")
                .Redefine("Muon_pt", "Muon_pt[muoncuts]")
@@ -338,16 +339,19 @@ void NanoAODAnalyzerrdframe::selectMuons() {
     } else if (_isRun17) {
         muonTrgHist = "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt";
     } else if (_isRun18) {
-        muonTrgHist = "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt";
+        //muonTrgHist = "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt";
+        muonTrgHist = "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose_abseta_pt";
     }
     muonid = TFile::Open(("data/MuonSF/Efficiencies_muon_generalTracks_Z_Run" + muonFile + "_ID.root").c_str());
-    TH2F* _hmuonid = dynamic_cast<TH2F *>(muonid->Get("NUM_TightID_DEN_TrackerMuons_abseta_pt"));
+    //TH2F* _hmuonid = dynamic_cast<TH2F *>(muonid->Get("NUM_TightID_DEN_TrackerMuons_abseta_pt"));
+    TH2F* _hmuonid = dynamic_cast<TH2F *>(muonid->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
     _hmuonid->SetDirectory(0);
     muonid->Close();
     WeightCalculatorFromHistogram* _muonid = new WeightCalculatorFromHistogram(_hmuonid);
 
     muoniso = TFile::Open(("data/MuonSF/Efficiencies_muon_generalTracks_Z_Run" + muonFile + "_ISO.root").c_str());
-    TH2F* _hmuoniso = dynamic_cast<TH2F *>(muoniso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt"));
+    //TH2F* _hmuoniso = dynamic_cast<TH2F *>(muoniso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt"));
+    TH2F* _hmuoniso = dynamic_cast<TH2F *>(muoniso->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_abseta_pt"));
     _hmuoniso->SetDirectory(0);
     muoniso->Close();
     WeightCalculatorFromHistogram* _muoniso = new WeightCalculatorFromHistogram(_hmuoniso);
